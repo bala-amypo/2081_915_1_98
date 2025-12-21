@@ -4,6 +4,5 @@ import com.example.demo.model.Recommendation;
 import java.util.List;
 
 public interface RecommendationService {
-
-    List<Recommendation> getAllRecommendations();
+    List<Recommendation> getRecommendations();
 }
