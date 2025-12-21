@@ -1,27 +1,25 @@
-@Autowired
-private UserService userService;
+package com.example.demo.controller;
 
-// Create new user
-@PostMapping("/register")
-public User createUser(@RequestBody User user) {
-    return userService.saveUser(user);
-}
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-// Get all users
-@GetMapping("/all")
-public List<User> getAllUsers() {
-    return userService.getAllUsers();
-}
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
 
-// Get user by ID
-@GetMapping("/{id}")
-public User getUserById(@PathVariable Long id) {
-    return userService.getUserById(id);
-}
+    @Autowired
+    private UserService userService;
 
-// Delete user by ID
-@DeleteMapping("/{id}")
-public String deleteUser(@PathVariable Long id) {
-    userService.deleteUser(id);
-    return "User deleted with ID: " + id;
+    @PostMapping("/login")
+    public AuthResponse login(@RequestBody AuthRequest authRequest) {
+        return userService.login(authRequest);
+    }
+
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody AuthRequest authRequest) {
+        return userService.register(authRequest);
+    }
 }
