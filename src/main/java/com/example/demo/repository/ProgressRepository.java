@@ -1,5 +1,7 @@
 package com.example.demo.repository;
 
-public class ProgressRepository {
-    
+import com.example.demo.model.Progress;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProgressRepository extends JpaRepository<Progress, Long> {
 }
