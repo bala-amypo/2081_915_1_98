@@ -1,5 +1,9 @@
 package com.example.demo.service;
 
-public class LessonService {
-    
+import com.example.demo.model.MicroLesson;
+import java.util.List;
+
+public interface LessonService {
+    MicroLesson saveLesson(MicroLesson lesson);
+    List<MicroLesson> getAllLessons();
 }
