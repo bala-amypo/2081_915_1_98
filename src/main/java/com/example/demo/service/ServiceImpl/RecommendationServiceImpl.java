@@ -11,7 +11,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public List<Recommendation> getRecommendations() {
-        // TODO: return actual recommendations
+        // TODO: Add real logic to fetch recommendations
         return new ArrayList<>();
     }
 }
