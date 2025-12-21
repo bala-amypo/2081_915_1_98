@@ -1,15 +1,27 @@
-package com.example.demo.controller;
+@Autowired
+private UserService userService;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
-import org.springframework.web.bind.annotation.*;
+// Create new user
+@PostMapping("/register")
+public User createUser(@RequestBody User user) {
+    return userService.saveUser(user);
+}
 
-@RestController
-@RequestMapping("/api/auth")
-public class AuthController {
+// Get all users
+@GetMapping("/all")
+public List<User> getAllUsers() {
+    return userService.getAllUsers();
+}
 
-    @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest request) {
-        return new AuthResponse("Login successful for " + request.getUsername());
-    }
+// Get user by ID
+@GetMapping("/{id}")
+public User getUserById(@PathVariable Long id) {
+    return userService.getUserById(id);
+}
+
+// Delete user by ID
+@DeleteMapping("/{id}")
+public String deleteUser(@PathVariable Long id) {
+    userService.deleteUser(id);
+    return "User deleted with ID: " + id;
 }
