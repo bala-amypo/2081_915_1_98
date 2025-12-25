@@ -1,21 +1,26 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MicroLesson {
+
+    @Id
+    @GeneratedValue
     private Long id;
+
     private String title;
-    private String content;
+    private String difficulty;
+    private String contentType;
+    private Integer durationMinutes;
+    private String tags;
 
-    public MicroLesson() {}
-    public MicroLesson(Long id, String title, String content) {
-        this.id = id; this.title = title; this.content = content;
-    }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    @ManyToOne
+    private Course course;
 }

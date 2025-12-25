@@ -1,21 +1,37 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Progress {
-    private Long userId;
-    private Long courseId;
-    private int progressPercentage;
 
-    public Progress() {}
-    public Progress(Long userId, Long courseId, int progressPercentage) {
-        this.userId = userId; this.courseId = courseId; this.progressPercentage = progressPercentage;
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private MicroLesson microLesson;
+
+    private Integer progressPercent;
+    private String status;
+    private BigDecimal score;
+
+    private LocalDateTime lastAccessedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.lastAccessedAt = LocalDateTime.now();
     }
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public Long getCourseId() { return courseId; }
-    public void setCourseId(Long courseId) { this.courseId = courseId; }
-
-    public int getProgressPercentage() { return progressPercentage; }
-    public void setProgressPercentage(int progressPercentage) { this.progressPercentage = progressPercentage; }
 }

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface MicroLessonRepository extends JpaRepository<MicroLesson, Long> {
 
-    List<MicroLesson> findByCourseId(Long courseId);
+    List<MicroLesson> findByFilters(String tags, String difficulty, String contentType);
 }
