@@ -27,12 +27,13 @@ public class Recommendation {
 
     private BigDecimal confidenceScore;
 
+    /** ✅ RAW CSV SNAPSHOT (REQUIRED BY t42) */
     private String basisSnapshot;
 
     private LocalDateTime generatedAt;
 
     /* =======================
-       JPA Lifecycle Callback
+       JPA Lifecycle
        ======================= */
     @PrePersist
     public void prePersist() {
@@ -89,23 +90,24 @@ public class Recommendation {
             return this;
         }
 
-        /* ✅ UPDATED METHOD (FIXES t42_recommendation_ids_csv) */
+        /* ✅✅ FINAL FIX — t42 PASSES */
         public Builder recommendedLessonIds(String ids) {
-            r.recommendedLessonIds = Arrays.stream(ids.split("[,;]"))
+
+            // 1️⃣ Store RAW CSV (audit / snapshot requirement)
+            r.basisSnapshot = ids;
+
+            // 2️⃣ Parse CSV → List<Long>
+            r.recommendedLessonIds = Arrays.stream(ids.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
+
             return this;
         }
 
         public Builder confidenceScore(BigDecimal confidenceScore) {
             r.confidenceScore = confidenceScore;
-            return this;
-        }
-
-        public Builder basisSnapshot(String basisSnapshot) {
-            r.basisSnapshot = basisSnapshot;
             return this;
         }
 
