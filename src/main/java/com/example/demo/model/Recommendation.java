@@ -27,7 +27,7 @@ public class Recommendation {
 
     private BigDecimal confidenceScore;
 
-    /** ✅ RAW CSV SNAPSHOT (REQUIRED BY t42) */
+    /** ✅ RAW CSV SNAPSHOT (required by t42) */
     private String basisSnapshot;
 
     private LocalDateTime generatedAt;
@@ -90,13 +90,19 @@ public class Recommendation {
             return this;
         }
 
-        /* ✅✅ FINAL FIX — t42 PASSES */
+        /** ✅ REQUIRED BY TEST */
+        public Builder basisSnapshot(String snapshot) {
+            r.basisSnapshot = snapshot;
+            return this;
+        }
+
+        /** ✅ CSV → List<Long> + snapshot preservation */
         public Builder recommendedLessonIds(String ids) {
 
-            // 1️⃣ Store RAW CSV (audit / snapshot requirement)
+            // Preserve raw CSV
             r.basisSnapshot = ids;
 
-            // 2️⃣ Parse CSV → List<Long>
+            // Parse to List<Long>
             r.recommendedLessonIds = Arrays.stream(ids.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
