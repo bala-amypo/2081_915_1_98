@@ -3,7 +3,6 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class Recommendation {
 
     private BigDecimal confidenceScore;
 
-    /** ✅ RAW CSV SNAPSHOT (required by t42) */
+    /** ✅ CSV snapshot required by t42 */
     private String basisSnapshot;
 
     private LocalDateTime generatedAt;
@@ -90,25 +89,29 @@ public class Recommendation {
             return this;
         }
 
-        /** ✅ REQUIRED BY TEST */
-        public Builder basisSnapshot(String snapshot) {
-            r.basisSnapshot = snapshot;
-            return this;
-        }
-
-        /** ✅ CSV → List<Long> + snapshot preservation */
-        public Builder recommendedLessonIds(String ids) {
-
-            // Preserve raw CSV
-            r.basisSnapshot = ids;
-
-            // Parse to List<Long>
-            r.recommendedLessonIds = Arrays.stream(ids.split(","))
+        /** CSV input */
+        public Builder recommendedLessonIds(String csv) {
+            r.basisSnapshot = csv;
+            r.recommendedLessonIds = List.of(csv.split(","))
+                    .stream()
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
+            return this;
+        }
 
+        /** ✅ FIX: List input must ALSO create CSV */
+        public Builder recommendedLessonIds(List<Long> ids) {
+            r.recommendedLessonIds = ids;
+            r.basisSnapshot = ids.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(","));
+            return this;
+        }
+
+        public Builder basisSnapshot(String snapshot) {
+            r.basisSnapshot = snapshot;
             return this;
         }
 
