@@ -6,9 +6,11 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -27,9 +29,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(User user) {
-        if (user == null) throw new RuntimeException();
-        if (userRepository.existsByEmail(user.getEmail()))
+        if (user == null) {
             throw new RuntimeException();
+        }
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException();
+        }
 
         user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -40,8 +46,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(RuntimeException::new);
 
-        if (!encoder.matches(password, user.getPassword()))
+        if (!encoder.matches(password, user.getPassword())) {
             throw new RuntimeException();
+        }
 
         String token = jwtUtil.generateToken(new HashMap<>(), email);
         return new AuthResponse(token);
