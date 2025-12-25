@@ -24,7 +24,7 @@ public class MicroLessonController {
     public ResponseEntity<MicroLesson> getMicroLesson(@PathVariable Long id) {
         MicroLesson microLesson = microLessonService.getMicroLesson(id);
         if (microLesson == null) {
-            // Removed ResourceNotFoundException import and use RuntimeException
+            // Using RuntimeException instead of custom exception
             throw new RuntimeException("MicroLesson not found with id " + id);
         }
         return ResponseEntity.ok(microLesson);
