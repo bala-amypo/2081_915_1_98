@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ProgressService {
 
-    Progress save(Progress progress);
+    Progress recordProgress(Long userId, Long lessonId, Progress progress);
 
-    List<Progress> findByUserId(Long userId);
+    List<Progress> getUserProgress(Long userId);
 }
