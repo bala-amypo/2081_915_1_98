@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.MicroLesson;
-import com.example.demo.service.impl.LessonServiceImpl;
+import com.example.demo.service.LessonService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,39 +10,39 @@ import java.util.List;
 @RequestMapping("/api/lessons")
 public class LessonController {
 
-    private final LessonServiceImpl lessonService;
+    private final LessonService lessonService;
 
-    public LessonController(LessonServiceImpl lessonService) {
+    public LessonController(LessonService lessonService) {
         this.lessonService = lessonService;
     }
 
-    @PostMapping
+    @PostMapping("/{courseId}")
     public MicroLesson addLesson(
-            @RequestParam Long courseId,
+            @PathVariable Long courseId,
             @RequestBody MicroLesson lesson
     ) {
         return lessonService.addLesson(courseId, lesson);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{lessonId}")
     public MicroLesson updateLesson(
-            @PathVariable Long id,
+            @PathVariable Long lessonId,
             @RequestBody MicroLesson lesson
     ) {
-        return lessonService.updateLesson(id, lesson);
+        return lessonService.updateLesson(lessonId, lesson);
     }
 
-    @GetMapping("/{id}")
-    public MicroLesson getLesson(@PathVariable Long id) {
-        return lessonService.getLesson(id);
+    @GetMapping("/{lessonId}")
+    public MicroLesson getLesson(@PathVariable Long lessonId) {
+        return lessonService.getLesson(lessonId);
     }
 
     @GetMapping("/search")
-    public List<MicroLesson> search(
-            @RequestParam(required = false) String tags,
-            @RequestParam(required = false) String difficulty,
-            @RequestParam(required = false) String contentType
+    public List<MicroLesson> searchLessons(
+            @RequestParam String difficulty,
+            @RequestParam String contentType,
+            @RequestParam String title
     ) {
-        return lessonService.findLessonsByFilters(tags, difficulty, contentType);
+        return lessonService.findLessonsByFilters(difficulty, contentType, title);
     }
 }

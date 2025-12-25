@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface MicroLessonRepository extends JpaRepository<MicroLesson, Long> {
 
-    // Search lessons by title (case-insensitive)
-    List<MicroLesson> findByTitleContainingIgnoreCase(String title);
-
+    List<MicroLesson> findByDifficultyAndContentTypeAndTitleContainingIgnoreCase(
+            String difficulty,
+            String contentType,
+            String title
+    );
 }
