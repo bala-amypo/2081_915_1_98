@@ -1,28 +1,31 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Progress;
-import com.example.demo.service.ProgressService;
+import com.example.demo.service.impl.ProgressServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/progress")
+@RequestMapping("/progress")
 public class ProgressController {
 
-    private final ProgressService service;
+    private final ProgressServiceImpl progressService;
 
-    public ProgressController(ProgressService service) {
-        this.service = service;
+    public ProgressController(ProgressServiceImpl progressService) {
+        this.progressService = progressService;
     }
 
-    @PostMapping
-    public Progress save(@RequestBody Progress progress) {
-        return service.saveProgress(progress);
+    @PostMapping("/{userId}/{lessonId}")
+    public Progress recordProgress(
+            @PathVariable Long userId,
+            @PathVariable Long lessonId,
+            @RequestBody Progress progress) {
+        return progressService.recordProgress(userId, lessonId, progress);
     }
 
-    @GetMapping
-    public List<Progress> getAll() {
-        return service.getAllProgress();
+    @GetMapping("/{userId}")
+    public List<Progress> getUserProgress(@PathVariable Long userId) {
+        return progressService.getUserProgress(userId);
     }
 }
