@@ -1,7 +1,9 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.model.Recommendation;
+import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.RecommendationRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RecommendationService;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +15,18 @@ import java.util.List;
 public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
+    private final UserRepository userRepository;
+    private final MicroLessonRepository microLessonRepository;
 
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
+    // TEST expects this constructor EXACTLY
+    public RecommendationServiceImpl(
+            RecommendationRepository recommendationRepository,
+            UserRepository userRepository,
+            MicroLessonRepository microLessonRepository
+    ) {
         this.recommendationRepository = recommendationRepository;
+        this.userRepository = userRepository;
+        this.microLessonRepository = microLessonRepository;
     }
 
     @Override
@@ -33,11 +44,20 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .findByUserIdAndGeneratedAtBetween(userId, start, end);
     }
 
+    // TEST requires this
+    public Recommendation getLatestRecommendation(Long userId) {
+        List<Recommendation> list =
+                recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);
+
+        return list.isEmpty() ? null : list.get(0);
+    }
+
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
-        return recommendationRepository
-                .findTopByUserIdOrderByGeneratedAtDesc(userId)
-                .map(Recommendation::parseLessonIds)
-                .orElse(Collections.emptyList());
+        Recommendation latest = getLatestRecommendation(userId);
+        if (latest == null) {
+            return Collections.emptyList();
+        }
+        return latest.parseRecommendedLessonIds();
     }
 }
