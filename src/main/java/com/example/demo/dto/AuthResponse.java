@@ -1,12 +1,15 @@
 package com.example.demo.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthResponse {
 
-    private String message;
-
-    public AuthResponse(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() { return message; }
+    private String accessToken;
 }
