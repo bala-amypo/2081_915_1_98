@@ -6,7 +6,7 @@ import com.example.demo.service.impl.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserServiceImpl userService;
@@ -23,7 +23,8 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(
             @RequestParam String email,
-            @RequestParam String password) {
+            @RequestParam String password
+    ) {
         return userService.login(email, password);
     }
 }
