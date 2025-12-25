@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface RecommendationRepository extends JpaRepository<Recommendation, Long> {
 
@@ -15,5 +14,5 @@ public interface RecommendationRepository extends JpaRepository<Recommendation, 
             LocalDateTime end
     );
 
-    Optional<Recommendation> findTopByUserIdOrderByGeneratedAtDesc(Long userId);
+    List<Recommendation> findByUserIdOrderByGeneratedAtDesc(Long userId);
 }

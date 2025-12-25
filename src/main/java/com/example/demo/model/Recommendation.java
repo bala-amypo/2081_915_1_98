@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,20 +14,32 @@ public class Recommendation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private Long userId;
 
-    // CSV storage for lesson IDs (IMPORTANT for t42)
-    @Column(nullable = false, length = 1000)
-    private String lessonIdsCsv;
+    @Column(precision = 5, scale = 2)
+    private BigDecimal confidenceScore;
 
-    @Column(nullable = false)
+    @Column(length = 1000)
+    private String basisSnapshot;
+
+    // CSV field (TEST t42 depends on this)
+    @Column(length = 1000)
+    private String recommendedLessonIds;
+
     private LocalDateTime generatedAt;
 
     @PrePersist
     public void prePersist() {
         if (generatedAt == null) {
             generatedAt = LocalDateTime.now();
+        }
+        if (confidenceScore != null) {
+            if (confidenceScore.compareTo(BigDecimal.ZERO) < 0) {
+                confidenceScore = BigDecimal.ZERO;
+            }
+            if (confidenceScore.compareTo(BigDecimal.ONE) > 0) {
+                confidenceScore = BigDecimal.ONE;
+            }
         }
     }
 
@@ -40,52 +53,35 @@ public class Recommendation {
         return userId;
     }
 
-    public String getLessonIdsCsv() {
-        return lessonIdsCsv;
+    public BigDecimal getConfidenceScore() {
+        return confidenceScore;
+    }
+
+    public String getBasisSnapshot() {
+        return basisSnapshot;
+    }
+
+    public String getRecommendedLessonIds() {
+        return recommendedLessonIds;
     }
 
     public LocalDateTime getGeneratedAt() {
         return generatedAt;
     }
 
-    // ---------- Setters ----------
+    // ---------- CSV PARSER ----------
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public void setLessonIdsCsv(String lessonIdsCsv) {
-        this.lessonIdsCsv = lessonIdsCsv;
-    }
-
-    public void setGeneratedAt(LocalDateTime generatedAt) {
-        this.generatedAt = generatedAt;
-    }
-
-    // ---------- CSV HELPERS (TEST CRITICAL) ----------
-
-    public List<Long> parseLessonIds() {
-        if (lessonIdsCsv == null || lessonIdsCsv.trim().isEmpty()) {
+    public List<Long> parseRecommendedLessonIds() {
+        if (recommendedLessonIds == null || recommendedLessonIds.isBlank()) {
             return Collections.emptyList();
         }
-
-        return Arrays.stream(lessonIdsCsv.split(","))
+        return Arrays.stream(recommendedLessonIds.split(","))
                 .map(String::trim)
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
     }
 
-    public void setLessonIds(List<Long> lessonIds) {
-        if (lessonIds == null || lessonIds.isEmpty()) {
-            this.lessonIdsCsv = "";
-        } else {
-            this.lessonIdsCsv = lessonIds.stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining(","));
-        }
-    }
-
-    // ---------- BUILDER (TEST REQUIRES THIS) ----------
+    // ---------- BUILDER ----------
 
     public static Builder builder() {
         return new Builder();
@@ -94,18 +90,33 @@ public class Recommendation {
     public static class Builder {
         private final Recommendation r = new Recommendation();
 
-        public Builder userId(Long userId) {
-            r.setUserId(userId);
+        public Builder id(Long id) {
+            r.id = id;
             return this;
         }
 
-        public Builder lessonIds(List<Long> lessonIds) {
-            r.setLessonIds(lessonIds);
+        public Builder userId(Long userId) {
+            r.userId = userId;
+            return this;
+        }
+
+        public Builder confidenceScore(BigDecimal score) {
+            r.confidenceScore = score;
+            return this;
+        }
+
+        public Builder basisSnapshot(String snapshot) {
+            r.basisSnapshot = snapshot;
+            return this;
+        }
+
+        public Builder recommendedLessonIds(String csv) {
+            r.recommendedLessonIds = csv;
             return this;
         }
 
         public Builder generatedAt(LocalDateTime time) {
-            r.setGeneratedAt(time);
+            r.generatedAt = time;
             return this;
         }
 
