@@ -1,8 +1,16 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Course {
 
     @Id
@@ -10,14 +18,15 @@ public class Course {
     private Long id;
 
     private String title;
-    private String category;
+    private String description;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @ManyToOne
+    private User instructor;
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    private LocalDateTime createdAt;
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

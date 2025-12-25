@@ -1,8 +1,17 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Progress {
 
     @Id
@@ -15,19 +24,14 @@ public class Progress {
     @ManyToOne
     private MicroLesson microLesson;
 
-    private boolean completed;
+    private Integer progressPercent;
+    private String status;
+    private BigDecimal score;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    private LocalDateTime lastAccessedAt;
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
-    public MicroLesson getMicroLesson() { return microLesson; }
-    public void setMicroLesson(MicroLesson microLesson) {
-        this.microLesson = microLesson;
+    @PrePersist
+    public void prePersist() {
+        this.lastAccessedAt = LocalDateTime.now();
     }
-
-    public boolean isCompleted() { return completed; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
 }
