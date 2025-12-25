@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.model.Progress;
 import com.example.demo.repository.ProgressRepository;
 import com.example.demo.service.ProgressService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,17 +11,16 @@ import java.util.List;
 @Service
 public class ProgressServiceImpl implements ProgressService {
 
-    private final ProgressRepository repository;
+    @Autowired
+    private ProgressRepository progressRepository;
 
-    public ProgressServiceImpl(ProgressRepository repository) {
-        this.repository = repository;
+    @Override
+    public Progress save(Progress progress) {
+        return progressRepository.save(progress);
     }
 
-    public Progress saveProgress(Progress progress) {
-        return repository.save(progress);
-    }
-
-    public List<Progress> getAllProgress() {
-        return repository.findAll();
+    @Override
+    public List<Progress> findByUserId(Long userId) {
+        return progressRepository.findByUserId(userId);
     }
 }
