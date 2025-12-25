@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Recommendation;
-import com.example.demo.service.ServiceImpl.RecommendationServiceImpl;
+import com.example.demo.service.impl.RecommendationServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +15,7 @@ public class RecommendationController {
     }
 
     @GetMapping("/latest/{userId}")
-    public Recommendation getLatest(@PathVariable Long userId) {
+    public Recommendation latest(@PathVariable Long userId) {
         return recommendationService.getLatestRecommendation(userId);
     }
 }

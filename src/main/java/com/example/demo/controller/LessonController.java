@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.MicroLesson;
-import com.example.demo.service.ServiceImpl.LessonServiceImpl;
+import com.example.demo.service.impl.LessonServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class LessonController {
     }
 
     @GetMapping("/search")
-    public List<MicroLesson> findLessons(
+    public List<MicroLesson> search(
             @RequestParam(required = false) String tags,
             @RequestParam(required = false) String difficulty,
             @RequestParam(required = false) String contentType

@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Progress;
-import com.example.demo.service.ServiceImpl.ProgressServiceImpl;
+import com.example.demo.service.impl.ProgressServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class ProgressController {
     }
 
     @PostMapping
-    public Progress recordProgress(
+    public Progress record(
             @RequestParam Long userId,
             @RequestParam Long lessonId,
             @RequestBody Progress progress
@@ -26,7 +26,7 @@ public class ProgressController {
     }
 
     @GetMapping("/{userId}")
-    public List<Progress> getUserProgress(@PathVariable Long userId) {
+    public List<Progress> list(@PathVariable Long userId) {
         return progressService.getUserProgress(userId);
     }
 }
