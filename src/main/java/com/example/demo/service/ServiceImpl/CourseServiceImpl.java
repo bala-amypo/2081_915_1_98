@@ -1,11 +1,12 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.ServiceImpl;
 
 import com.example.demo.model.Course;
 import com.example.demo.model.User;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.CourseService;
 
-public class CourseServiceImpl {
+public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
@@ -18,21 +19,22 @@ public class CourseServiceImpl {
         this.userRepository = userRepository;
     }
 
+    @Override
     public Course createCourse(Course course, Long instructorId) {
         User instructor = userRepository.findById(instructorId)
                 .orElseThrow(RuntimeException::new);
 
         if (courseRepository.existsByTitleAndInstructorId(
-                course.getTitle(), instructorId)) {
+                course.getTitle(), instructorId))
             throw new RuntimeException();
-        }
 
         course.setInstructor(instructor);
         return courseRepository.save(course);
     }
 
-    public Course updateCourse(Long courseId, Course updated) {
-        Course existing = courseRepository.findById(courseId)
+    @Override
+    public Course updateCourse(Long id, Course updated) {
+        Course existing = courseRepository.findById(id)
                 .orElseThrow(RuntimeException::new);
 
         existing.setTitle(updated.getTitle());
@@ -40,8 +42,9 @@ public class CourseServiceImpl {
         return courseRepository.save(existing);
     }
 
-    public Course getCourse(Long courseId) {
-        return courseRepository.findById(courseId)
+    @Override
+    public Course getCourse(Long id) {
+        return courseRepository.findById(id)
                 .orElseThrow(RuntimeException::new);
     }
 }

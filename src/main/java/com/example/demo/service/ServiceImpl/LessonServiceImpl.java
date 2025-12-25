@@ -1,13 +1,14 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.ServiceImpl;
 
 import com.example.demo.model.Course;
 import com.example.demo.model.MicroLesson;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.MicroLessonRepository;
+import com.example.demo.service.MicroLessonService;
 
 import java.util.List;
 
-public class LessonServiceImpl {
+public class LessonServiceImpl implements MicroLessonService {
 
     private final MicroLessonRepository microLessonRepository;
     private final CourseRepository courseRepository;
@@ -20,6 +21,7 @@ public class LessonServiceImpl {
         this.courseRepository = courseRepository;
     }
 
+    @Override
     public MicroLesson addLesson(Long courseId, MicroLesson lesson) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(RuntimeException::new);
@@ -28,21 +30,24 @@ public class LessonServiceImpl {
         return microLessonRepository.save(lesson);
     }
 
+    @Override
     public MicroLesson updateLesson(Long lessonId, MicroLesson updated) {
         MicroLesson existing = microLessonRepository.findById(lessonId)
                 .orElseThrow(RuntimeException::new);
 
         existing.setTitle(updated.getTitle());
-        existing.setContentType(updated.getContentType());
         existing.setDifficulty(updated.getDifficulty());
+        existing.setContentType(updated.getContentType());
         return microLessonRepository.save(existing);
     }
 
+    @Override
     public MicroLesson getLesson(Long lessonId) {
         return microLessonRepository.findById(lessonId)
                 .orElseThrow(RuntimeException::new);
     }
 
+    @Override
     public List<MicroLesson> findLessonsByFilters(
             String tags,
             String difficulty,

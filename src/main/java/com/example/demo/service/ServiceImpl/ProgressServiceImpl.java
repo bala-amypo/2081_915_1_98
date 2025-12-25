@@ -1,4 +1,4 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.ServiceImpl;
 
 import com.example.demo.model.MicroLesson;
 import com.example.demo.model.Progress;
@@ -6,10 +6,11 @@ import com.example.demo.model.User;
 import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.ProgressRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.ProgressService;
 
 import java.util.List;
 
-public class ProgressServiceImpl {
+public class ProgressServiceImpl implements ProgressService {
 
     private final ProgressRepository progressRepository;
     private final UserRepository userRepository;
@@ -25,11 +26,8 @@ public class ProgressServiceImpl {
         this.microLessonRepository = microLessonRepository;
     }
 
-    public Progress recordProgress(
-            Long userId,
-            Long lessonId,
-            Progress input
-    ) {
+    @Override
+    public Progress recordProgress(Long userId, Long lessonId, Progress input) {
         User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
 
@@ -49,6 +47,7 @@ public class ProgressServiceImpl {
         return progressRepository.save(progress);
     }
 
+    @Override
     public List<Progress> getUserProgress(Long userId) {
         return progressRepository
                 .findByUserIdOrderByLastAccessedAtDesc(userId);
