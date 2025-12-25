@@ -5,7 +5,7 @@ import com.example.demo.service.impl.CourseServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/courses")
+@RequestMapping("/api/courses")
 public class CourseController {
 
     private final CourseServiceImpl courseService;
@@ -14,22 +14,24 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @PostMapping("/{instructorId}")
+    @PostMapping
     public Course createCourse(
-            @PathVariable Long instructorId,
-            @RequestBody Course course) {
+            @RequestBody Course course,
+            @RequestParam Long instructorId
+    ) {
         return courseService.createCourse(course, instructorId);
     }
 
-    @PutMapping("/{courseId}")
+    @PutMapping("/{id}")
     public Course updateCourse(
-            @PathVariable Long courseId,
-            @RequestBody Course course) {
-        return courseService.updateCourse(courseId, course);
+            @PathVariable Long id,
+            @RequestBody Course course
+    ) {
+        return courseService.updateCourse(id, course);
     }
 
-    @GetMapping("/{courseId}")
-    public Course getCourse(@PathVariable Long courseId) {
-        return courseService.getCourse(courseId);
+    @GetMapping("/{id}")
+    public Course getCourse(@PathVariable Long id) {
+        return courseService.getCourse(id);
     }
 }

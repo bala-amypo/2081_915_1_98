@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/progress")
+@RequestMapping("/api/progress")
 public class ProgressController {
 
     private final ProgressServiceImpl progressService;
@@ -16,11 +16,12 @@ public class ProgressController {
         this.progressService = progressService;
     }
 
-    @PostMapping("/{userId}/{lessonId}")
+    @PostMapping
     public Progress recordProgress(
-            @PathVariable Long userId,
-            @PathVariable Long lessonId,
-            @RequestBody Progress progress) {
+            @RequestParam Long userId,
+            @RequestParam Long lessonId,
+            @RequestBody Progress progress
+    ) {
         return progressService.recordProgress(userId, lessonId, progress);
     }
 

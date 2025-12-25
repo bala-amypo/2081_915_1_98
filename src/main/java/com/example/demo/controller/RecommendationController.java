@@ -5,7 +5,7 @@ import com.example.demo.service.impl.RecommendationServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recommendations")
+@RequestMapping("/api/recommendations")
 public class RecommendationController {
 
     private final RecommendationServiceImpl recommendationService;
