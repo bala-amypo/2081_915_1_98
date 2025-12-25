@@ -5,9 +5,11 @@ import com.example.demo.model.MicroLesson;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.service.MicroLessonService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class LessonServiceImpl implements MicroLessonService {
 
     private final MicroLessonRepository microLessonRepository;

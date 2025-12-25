@@ -5,7 +5,9 @@ import com.example.demo.model.User;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CourseService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
@@ -25,8 +27,9 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(RuntimeException::new);
 
         if (courseRepository.existsByTitleAndInstructorId(
-                course.getTitle(), instructorId))
+                course.getTitle(), instructorId)) {
             throw new RuntimeException();
+        }
 
         course.setInstructor(instructor);
         return courseRepository.save(course);
