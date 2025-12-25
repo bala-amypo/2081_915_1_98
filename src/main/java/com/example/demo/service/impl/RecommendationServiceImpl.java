@@ -1,7 +1,9 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.model.Recommendation;
+import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.RecommendationRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RecommendationService;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,19 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
 
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
+    // ✅ Constructor used by SPRING
+    public RecommendationServiceImpl(
+            RecommendationRepository recommendationRepository
+    ) {
+        this.recommendationRepository = recommendationRepository;
+    }
+
+    // ✅ Constructor used by TESTS (REQUIRED)
+    public RecommendationServiceImpl(
+            RecommendationRepository recommendationRepository,
+            UserRepository userRepository,
+            MicroLessonRepository microLessonRepository
+    ) {
         this.recommendationRepository = recommendationRepository;
     }
 
@@ -32,7 +46,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .findByUserIdAndGeneratedAtBetween(userId, start, end);
     }
 
-    // ❗ NOT in interface → NO @Override
+    // ❗ helper method (NOT in interface → no @Override)
     public Recommendation getLatestRecommendation(Long userId) {
         List<Recommendation> list =
                 recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);
