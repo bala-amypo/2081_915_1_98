@@ -15,17 +15,18 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
 
+    // ✅ Constructor MUST accept ONLY this repository
     public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
         this.recommendationRepository = recommendationRepository;
     }
 
-    // ✅ REQUIRED by RecommendationService
+    // ✅ MUST match RecommendationService
     @Override
     public Recommendation save(Recommendation recommendation) {
         return recommendationRepository.save(recommendation);
     }
 
-    // ✅ REQUIRED by RecommendationService
+    // ✅ MUST match RecommendationService
     @Override
     public List<Recommendation> getRecommendationsInRange(
             Long userId,
@@ -36,7 +37,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .findByUserIdAndGeneratedAtBetween(userId, start, end);
     }
 
-    // ✅ REQUIRED by RecommendationService
+    // ✅ MUST match RecommendationService
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
 
@@ -48,6 +49,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             return Collections.emptyList();
         }
 
+        // ✅ CSV → List<Long>
         String[] parts = latest.getLessonIdsCsv().split(",");
         List<Long> ids = new ArrayList<>();
 
