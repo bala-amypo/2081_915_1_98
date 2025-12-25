@@ -1,22 +1,31 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
-    public AuthResponse login(AuthRequest authRequest) {
-        // TODO: implement login logic
-        return new AuthResponse("Login successful");
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public AuthResponse register(AuthRequest authRequest) {
-        // TODO: implement register logic
-        return new AuthResponse("Registration successful");
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }

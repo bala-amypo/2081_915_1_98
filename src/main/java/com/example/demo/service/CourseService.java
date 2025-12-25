@@ -1,11 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Course;
+
 import java.util.List;
 
 public interface CourseService {
 
-    Course saveCourse(Course course);
+    Course save(Course course);
 
-    List<Course> getAllCourses();
+    List<Course> findAll();
+
+    List<Course> findByInstructorId(Long instructorId);
 }
