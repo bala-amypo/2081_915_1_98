@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Progress;
-import com.example.demo.service.impl.ProgressServiceImpl;
+import com.example.demo.service.ServiceImpl.ProgressServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

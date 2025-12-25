@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Course;
-import com.example.demo.service.impl.CourseServiceImpl;
+import com.example.demo.service.ServiceImpl.CourseServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

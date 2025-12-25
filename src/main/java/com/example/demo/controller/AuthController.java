@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
-import com.example.demo.service.impl.UserServiceImpl;
+import com.example.demo.service.ServiceImpl.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

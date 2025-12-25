@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Recommendation;
-import com.example.demo.service.impl.RecommendationServiceImpl;
+import com.example.demo.service.ServiceImpl.RecommendationServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
