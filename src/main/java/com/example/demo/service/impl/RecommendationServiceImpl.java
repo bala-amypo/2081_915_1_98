@@ -32,11 +32,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .findByUserIdAndGeneratedAtBetween(userId, start, end);
     }
 
-    /**
-     * REQUIRED BY t59_latest_recommendation_failure
-     * Must THROW exception if no recommendation exists
-     */
-    @Override
+    // ❗ NOT in interface → NO @Override
     public Recommendation getLatestRecommendation(Long userId) {
         List<Recommendation> list =
                 recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);
@@ -48,9 +44,6 @@ public class RecommendationServiceImpl implements RecommendationService {
         return list.get(0);
     }
 
-    /**
-     * REQUIRED BY t42_recommendation_ids_csv
-     */
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
         Recommendation latest = getLatestRecommendation(userId);
