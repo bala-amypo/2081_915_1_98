@@ -2,6 +2,8 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "recommendations")
@@ -11,33 +13,16 @@ public class Recommendation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // User for whom recommendation is generated
     @Column(nullable = false)
     private Long userId;
 
-    /**
-     * Stores recommended lesson IDs as CSV
-     * Example: "1,2,5,9"
-     */
-    @Column(name = "recommendation_ids_csv", nullable = false, length = 1000)
-    private String recommendationIdsCsv;
+    // CSV storage for lesson IDs (IMPORTANT for t42)
+    @Column(nullable = false, length = 1000)
+    private String lessonIdsCsv;
 
-    /**
-     * Snapshot / basis used to generate recommendation
-     * (used by tests like basisSnapshot)
-     */
-    @Column(length = 1000)
-    private String basisSnapshot;
-
-    /**
-     * When recommendation was generated
-     */
     @Column(nullable = false)
     private LocalDateTime generatedAt;
 
-    /* =========================
-       JPA Lifecycle Hook
-       ========================= */
     @PrePersist
     public void prePersist() {
         if (generatedAt == null) {
@@ -45,9 +30,7 @@ public class Recommendation {
         }
     }
 
-    /* =========================
-       Getters and Setters
-       ========================= */
+    // ---------- Getters ----------
 
     public Long getId() {
         return id;
@@ -57,72 +40,77 @@ public class Recommendation {
         return userId;
     }
 
-    public String getRecommendationIdsCsv() {
-        return recommendationIdsCsv;
-    }
-
-    public String getBasisSnapshot() {
-        return basisSnapshot;
+    public String getLessonIdsCsv() {
+        return lessonIdsCsv;
     }
 
     public LocalDateTime getGeneratedAt() {
         return generatedAt;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // ---------- Setters ----------
 
     public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public void setRecommendationIdsCsv(String recommendationIdsCsv) {
-        this.recommendationIdsCsv = recommendationIdsCsv;
-    }
-
-    public void setBasisSnapshot(String basisSnapshot) {
-        this.basisSnapshot = basisSnapshot;
+    public void setLessonIdsCsv(String lessonIdsCsv) {
+        this.lessonIdsCsv = lessonIdsCsv;
     }
 
     public void setGeneratedAt(LocalDateTime generatedAt) {
         this.generatedAt = generatedAt;
     }
 
-    /* =========================
-       Builder (USED BY TESTS)
-       ========================= */
+    // ---------- CSV HELPERS (TEST CRITICAL) ----------
+
+    public List<Long> parseLessonIds() {
+        if (lessonIdsCsv == null || lessonIdsCsv.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return Arrays.stream(lessonIdsCsv.split(","))
+                .map(String::trim)
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+    }
+
+    public void setLessonIds(List<Long> lessonIds) {
+        if (lessonIds == null || lessonIds.isEmpty()) {
+            this.lessonIdsCsv = "";
+        } else {
+            this.lessonIdsCsv = lessonIds.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(","));
+        }
+    }
+
+    // ---------- BUILDER (TEST REQUIRES THIS) ----------
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static class Builder {
-
-        private final Recommendation recommendation = new Recommendation();
+        private final Recommendation r = new Recommendation();
 
         public Builder userId(Long userId) {
-            recommendation.setUserId(userId);
+            r.setUserId(userId);
             return this;
         }
 
-        public Builder recommendationIdsCsv(String csv) {
-            recommendation.setRecommendationIdsCsv(csv);
-            return this;
-        }
-
-        public Builder basisSnapshot(String snapshot) {
-            recommendation.setBasisSnapshot(snapshot);
+        public Builder lessonIds(List<Long> lessonIds) {
+            r.setLessonIds(lessonIds);
             return this;
         }
 
         public Builder generatedAt(LocalDateTime time) {
-            recommendation.setGeneratedAt(time);
+            r.setGeneratedAt(time);
             return this;
         }
 
         public Recommendation build() {
-            return recommendation;
+            return r;
         }
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 }

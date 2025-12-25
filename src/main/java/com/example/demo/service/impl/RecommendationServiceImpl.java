@@ -6,9 +6,8 @@ import com.example.demo.service.RecommendationService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
@@ -36,18 +35,9 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
-        Recommendation latest =
-                recommendationRepository.findTopByUserIdOrderByGeneratedAtDesc(userId)
-                        .orElse(null);
-
-        if (latest == null || latest.getRecommendationIdsCsv() == null) {
-            return List.of();
-        }
-
-        return Arrays.stream(latest.getRecommendationIdsCsv().split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
+        return recommendationRepository
+                .findTopByUserIdOrderByGeneratedAtDesc(userId)
+                .map(Recommendation::parseLessonIds)
+                .orElse(Collections.emptyList());
     }
 }
