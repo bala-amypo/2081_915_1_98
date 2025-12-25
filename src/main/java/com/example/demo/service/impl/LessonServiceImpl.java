@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.Course;
 import com.example.demo.model.MicroLesson;
+import com.example.demo.model.Course;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.service.LessonService;
@@ -15,12 +15,17 @@ public class LessonServiceImpl implements LessonService {
     private final MicroLessonRepository microLessonRepository;
     private final CourseRepository courseRepository;
 
-    public LessonServiceImpl(MicroLessonRepository microLessonRepository,
-                             CourseRepository courseRepository) {
+    public LessonServiceImpl(
+            MicroLessonRepository microLessonRepository,
+            CourseRepository courseRepository
+    ) {
         this.microLessonRepository = microLessonRepository;
         this.courseRepository = courseRepository;
     }
 
+    // ==============================
+    // ADD LESSON
+    // ==============================
     @Override
     public MicroLesson addLesson(Long courseId, MicroLesson lesson) {
         Course course = courseRepository.findById(courseId)
@@ -30,32 +35,43 @@ public class LessonServiceImpl implements LessonService {
         return microLessonRepository.save(lesson);
     }
 
+    // ==============================
+    // UPDATE LESSON
+    // ==============================
     @Override
     public MicroLesson updateLesson(Long lessonId, MicroLesson updated) {
-        MicroLesson lesson = microLessonRepository.findById(lessonId)
+        MicroLesson existing = microLessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
 
-        lesson.setTitle(updated.getTitle());
-        lesson.setDifficulty(updated.getDifficulty());
-        lesson.setContentType(updated.getContentType());
+        existing.setTitle(updated.getTitle());
+        existing.setDifficulty(updated.getDifficulty());
+        existing.setContentType(updated.getContentType());
 
-        return microLessonRepository.save(lesson);
+        return microLessonRepository.save(existing);
     }
 
+    // ==============================
+    // GET LESSON BY ID
+    // ==============================
     @Override
     public MicroLesson getLesson(Long lessonId) {
         return microLessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
     }
 
+    // ==============================
+    // FIND LESSONS BY FILTERS
+    // ==============================
     @Override
     public List<MicroLesson> findLessonsByFilters(
             String difficulty,
             String contentType,
             String title
     ) {
-        return microLessonRepository.findByDifficultyAndContentTypeAndTitleContainingIgnoreCase(
-                difficulty, contentType, title
+        return microLessonRepository.findByFilters(
+                difficulty,
+                contentType,
+                title
         );
     }
 }
