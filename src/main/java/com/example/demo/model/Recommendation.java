@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "recommendations")
@@ -36,7 +38,9 @@ public class Recommendation {
     // =========================
     @PrePersist
     public void prePersist() {
-        this.generatedAt = LocalDateTime.now();
+        if (generatedAt == null) {
+            this.generatedAt = LocalDateTime.now();
+        }
     }
 
     // =========================
@@ -67,26 +71,7 @@ public class Recommendation {
     }
 
     // =========================
-    // SETTERS
-    // =========================
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public void setRecommendedLessonIds(List<Long> recommendedLessonIds) {
-        this.recommendedLessonIds = recommendedLessonIds;
-    }
-
-    public void setConfidenceScore(BigDecimal confidenceScore) {
-        this.confidenceScore = confidenceScore;
-    }
-
-    public void setBasisSnapshot(String basisSnapshot) {
-        this.basisSnapshot = basisSnapshot;
-    }
-
-    // =========================
-    // BUILDER (REQUIRED BY TEST)
+    // BUILDER
     // =========================
     public static Builder builder() {
         return new Builder();
@@ -106,8 +91,18 @@ public class Recommendation {
             return this;
         }
 
+        // ✅ ACCEPT List<Long>
         public Builder recommendedLessonIds(List<Long> ids) {
             r.recommendedLessonIds = ids;
+            return this;
+        }
+
+        // ✅ ACCEPT String "1,2,3" (FOR TEST)
+        public Builder recommendedLessonIds(String ids) {
+            r.recommendedLessonIds = Arrays.stream(ids.split(","))
+                    .map(String::trim)
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
             return this;
         }
 
@@ -118,6 +113,12 @@ public class Recommendation {
 
         public Builder basisSnapshot(String snapshot) {
             r.basisSnapshot = snapshot;
+            return this;
+        }
+
+        // ✅ REQUIRED BY TEST
+        public Builder generatedAt(LocalDateTime time) {
+            r.generatedAt = time;
             return this;
         }
 
