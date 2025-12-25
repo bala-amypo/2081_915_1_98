@@ -1,31 +1,55 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.example.demo.security.JwtUtil;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.List;
+import java.util.HashMap;
 
-@Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    @Override
-    public User save(User user) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            BCryptPasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil
+    ) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
+
+    public User register(User user) {
+        if (user == null) {
+            throw new RuntimeException();
+        }
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException();
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    @Override
-    public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public AuthResponse login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(RuntimeException::new);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException();
+        }
+
+        String token = jwtUtil.generateToken(new HashMap<>(), email);
+        return new AuthResponse(token);
     }
 
-    @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
 }

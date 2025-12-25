@@ -1,31 +1,47 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.model.Course;
+import com.example.demo.model.User;
 import com.example.demo.repository.CourseRepository;
-import com.example.demo.service.CourseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.example.demo.repository.UserRepository;
 
-import java.util.List;
+public class CourseServiceImpl {
 
-@Service
-public class CourseServiceImpl implements CourseService {
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+    public CourseServiceImpl(
+            CourseRepository courseRepository,
+            UserRepository userRepository
+    ) {
+        this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
+    }
 
-    @Override
-    public Course save(Course course) {
+    public Course createCourse(Course course, Long instructorId) {
+        User instructor = userRepository.findById(instructorId)
+                .orElseThrow(RuntimeException::new);
+
+        if (courseRepository.existsByTitleAndInstructorId(
+                course.getTitle(), instructorId)) {
+            throw new RuntimeException();
+        }
+
+        course.setInstructor(instructor);
         return courseRepository.save(course);
     }
 
-    @Override
-    public List<Course> findAll() {
-        return courseRepository.findAll();
+    public Course updateCourse(Long courseId, Course updated) {
+        Course existing = courseRepository.findById(courseId)
+                .orElseThrow(RuntimeException::new);
+
+        existing.setTitle(updated.getTitle());
+        existing.setDescription(updated.getDescription());
+        return courseRepository.save(existing);
     }
 
-    @Override
-    public List<Course> findByInstructorId(Long instructorId) {
-        return courseRepository.findByInstructorId(instructorId);
+    public Course getCourse(Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(RuntimeException::new);
     }
 }
