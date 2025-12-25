@@ -10,20 +10,20 @@ import java.util.List;
 
 public interface RecommendationRepository extends JpaRepository<Recommendation, Long> {
 
-    // Already added earlier
+    // FIXED METHOD
     @Query("""
         SELECT r FROM Recommendation r
-        WHERE r.user.id = :userId
+        WHERE r.userId = :userId
         ORDER BY r.generatedAt DESC
     """)
     List<Recommendation> findByUserIdOrderByGeneratedAtDesc(
             @Param("userId") Long userId
     );
 
-    // ✅ ADD THIS METHOD (REQUIRED BY TESTS)
+    // FIXED METHOD (USED BY TESTS)
     @Query("""
         SELECT r FROM Recommendation r
-        WHERE r.user.id = :userId
+        WHERE r.userId = :userId
           AND r.generatedAt BETWEEN :start AND :end
         ORDER BY r.generatedAt DESC
     """)
