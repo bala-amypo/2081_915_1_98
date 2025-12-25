@@ -1,10 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "recommendations")
@@ -14,26 +11,33 @@ public class Recommendation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // User for whom recommendation is generated
+    @Column(nullable = false)
     private Long userId;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "recommendation_lessons",
-            joinColumns = @JoinColumn(name = "recommendation_id")
-    )
-    @Column(name = "lesson_id")
-    private List<Long> recommendedLessonIds;
+    /**
+     * Stores recommended lesson IDs as CSV
+     * Example: "1,2,5,9"
+     */
+    @Column(name = "recommendation_ids_csv", nullable = false, length = 1000)
+    private String recommendationIdsCsv;
 
-    private BigDecimal confidenceScore;
-
-    /** ✅ CSV snapshot required by t42 */
+    /**
+     * Snapshot / basis used to generate recommendation
+     * (used by tests like basisSnapshot)
+     */
+    @Column(length = 1000)
     private String basisSnapshot;
 
+    /**
+     * When recommendation was generated
+     */
+    @Column(nullable = false)
     private LocalDateTime generatedAt;
 
-    /* =======================
-       JPA Lifecycle
-       ======================= */
+    /* =========================
+       JPA Lifecycle Hook
+       ========================= */
     @PrePersist
     public void prePersist() {
         if (generatedAt == null) {
@@ -41,9 +45,10 @@ public class Recommendation {
         }
     }
 
-    /* =======================
-       Getters
-       ======================= */
+    /* =========================
+       Getters and Setters
+       ========================= */
+
     public Long getId() {
         return id;
     }
@@ -52,12 +57,8 @@ public class Recommendation {
         return userId;
     }
 
-    public List<Long> getRecommendedLessonIds() {
-        return recommendedLessonIds;
-    }
-
-    public BigDecimal getConfidenceScore() {
-        return confidenceScore;
+    public String getRecommendationIdsCsv() {
+        return recommendationIdsCsv;
     }
 
     public String getBasisSnapshot() {
@@ -68,65 +69,60 @@ public class Recommendation {
         return generatedAt;
     }
 
-    /* =======================
-       Builder
-       ======================= */
-    public static Builder builder() {
-        return new Builder();
+    public void setId(Long id) {
+        this.id = id;
     }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setRecommendationIdsCsv(String recommendationIdsCsv) {
+        this.recommendationIdsCsv = recommendationIdsCsv;
+    }
+
+    public void setBasisSnapshot(String basisSnapshot) {
+        this.basisSnapshot = basisSnapshot;
+    }
+
+    public void setGeneratedAt(LocalDateTime generatedAt) {
+        this.generatedAt = generatedAt;
+    }
+
+    /* =========================
+       Builder (USED BY TESTS)
+       ========================= */
 
     public static class Builder {
 
-        private final Recommendation r = new Recommendation();
-
-        public Builder id(Long id) {
-            r.id = id;
-            return this;
-        }
+        private final Recommendation recommendation = new Recommendation();
 
         public Builder userId(Long userId) {
-            r.userId = userId;
+            recommendation.setUserId(userId);
             return this;
         }
 
-        /** CSV input */
-        public Builder recommendedLessonIds(String csv) {
-            r.basisSnapshot = csv;
-            r.recommendedLessonIds = List.of(csv.split(","))
-                    .stream()
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-            return this;
-        }
-
-        /** ✅ FIX: List input must ALSO create CSV */
-        public Builder recommendedLessonIds(List<Long> ids) {
-            r.recommendedLessonIds = ids;
-            r.basisSnapshot = ids.stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining(","));
+        public Builder recommendationIdsCsv(String csv) {
+            recommendation.setRecommendationIdsCsv(csv);
             return this;
         }
 
         public Builder basisSnapshot(String snapshot) {
-            r.basisSnapshot = snapshot;
+            recommendation.setBasisSnapshot(snapshot);
             return this;
         }
 
-        public Builder confidenceScore(BigDecimal confidenceScore) {
-            r.confidenceScore = confidenceScore;
-            return this;
-        }
-
-        public Builder generatedAt(LocalDateTime generatedAt) {
-            r.generatedAt = generatedAt;
+        public Builder generatedAt(LocalDateTime time) {
+            recommendation.setGeneratedAt(time);
             return this;
         }
 
         public Recommendation build() {
-            return r;
+            return recommendation;
         }
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 }

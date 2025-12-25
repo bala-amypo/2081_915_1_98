@@ -1,21 +1,22 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Recommendation;
-import com.example.demo.service.impl.RecommendationServiceImpl;
+import com.example.demo.service.RecommendationService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/recommendations")
 public class RecommendationController {
 
-    private final RecommendationServiceImpl recommendationService;
+    private final RecommendationService recommendationService;
 
-    public RecommendationController(RecommendationServiceImpl recommendationService) {
+    public RecommendationController(RecommendationService recommendationService) {
         this.recommendationService = recommendationService;
     }
 
     @GetMapping("/latest/{userId}")
-    public Recommendation latest(@PathVariable Long userId) {
-        return recommendationService.getLatestRecommendation(userId);
+    public List<Long> getLatestRecommendation(@PathVariable Long userId) {
+        return recommendationService.getLatestRecommendationIds(userId);
     }
 }

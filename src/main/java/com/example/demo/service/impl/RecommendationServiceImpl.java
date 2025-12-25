@@ -6,27 +6,24 @@ import com.example.demo.service.RecommendationService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
 
-    // ✅ Constructor MUST accept ONLY this repository
     public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
         this.recommendationRepository = recommendationRepository;
     }
 
-    // ✅ MUST match RecommendationService
     @Override
     public Recommendation save(Recommendation recommendation) {
         return recommendationRepository.save(recommendation);
     }
 
-    // ✅ MUST match RecommendationService
     @Override
     public List<Recommendation> getRecommendationsInRange(
             Long userId,
@@ -37,26 +34,20 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .findByUserIdAndGeneratedAtBetween(userId, start, end);
     }
 
-    // ✅ MUST match RecommendationService
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
-
         Recommendation latest =
-                recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);
+                recommendationRepository.findTopByUserIdOrderByGeneratedAtDesc(userId)
+                        .orElse(null);
 
-        if (latest == null || latest.getLessonIdsCsv() == null
-                || latest.getLessonIdsCsv().isBlank()) {
-            return Collections.emptyList();
+        if (latest == null || latest.getRecommendationIdsCsv() == null) {
+            return List.of();
         }
 
-        // ✅ CSV → List<Long>
-        String[] parts = latest.getLessonIdsCsv().split(",");
-        List<Long> ids = new ArrayList<>();
-
-        for (String part : parts) {
-            ids.add(Long.parseLong(part.trim()));
-        }
-
-        return ids;
+        return Arrays.stream(latest.getRecommendationIdsCsv().split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
     }
 }
