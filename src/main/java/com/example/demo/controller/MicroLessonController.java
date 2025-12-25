@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.MicroLesson;
 import com.example.demo.service.MicroLessonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,8 @@ public class MicroLessonController {
     public ResponseEntity<MicroLesson> getMicroLesson(@PathVariable Long id) {
         MicroLesson microLesson = microLessonService.getMicroLesson(id);
         if (microLesson == null) {
-            throw new ResourceNotFoundException("MicroLesson not found with id " + id);
+            // Removed ResourceNotFoundException import and use RuntimeException
+            throw new RuntimeException("MicroLesson not found with id " + id);
         }
         return ResponseEntity.ok(microLesson);
     }
@@ -39,7 +39,7 @@ public class MicroLessonController {
     public ResponseEntity<MicroLesson> updateMicroLesson(@PathVariable Long id, @RequestBody MicroLesson microLesson) {
         MicroLesson updated = microLessonService.updateMicroLesson(id, microLesson);
         if (updated == null) {
-            throw new ResourceNotFoundException("MicroLesson not found with id " + id);
+            throw new RuntimeException("MicroLesson not found with id " + id);
         }
         return ResponseEntity.ok(updated);
     }
