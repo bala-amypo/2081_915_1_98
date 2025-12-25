@@ -1,3 +1,17 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.model.Recommendation;
+import com.example.demo.repository.MicroLessonRepository;
+import com.example.demo.repository.RecommendationRepository;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.RecommendationService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
