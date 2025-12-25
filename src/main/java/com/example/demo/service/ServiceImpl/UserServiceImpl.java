@@ -1,4 +1,4 @@
-package com.example.demo.service.ServiceImpl;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
@@ -32,11 +32,9 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new RuntimeException();
         }
-
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException();
         }
-
         user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }

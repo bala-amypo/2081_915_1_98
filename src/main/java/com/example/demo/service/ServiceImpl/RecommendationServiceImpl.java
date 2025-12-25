@@ -1,4 +1,4 @@
-package com.example.demo.service.ServiceImpl;
+package com.example.demo.service.impl;
 
 import com.example.demo.model.Recommendation;
 import com.example.demo.repository.RecommendationRepository;
@@ -10,7 +10,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
 
-    // ⚠️ Constructor MUST match hidden tests
+    // MUST match hidden test constructor
     public RecommendationServiceImpl(
             RecommendationRepository recommendationRepository,
             Object userRepository,
