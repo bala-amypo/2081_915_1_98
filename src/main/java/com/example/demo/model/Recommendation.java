@@ -3,9 +3,9 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Arrays;
 
 @Entity
 @Table(name = "recommendations")
@@ -25,27 +25,25 @@ public class Recommendation {
     @Column(name = "lesson_id")
     private List<Long> recommendedLessonIds;
 
-    @Column(precision = 5, scale = 2)
     private BigDecimal confidenceScore;
 
-    @Column(length = 1000)
     private String basisSnapshot;
 
     private LocalDateTime generatedAt;
 
-    // =========================
-    // JPA CALLBACK
-    // =========================
+    /* =======================
+       JPA Lifecycle Callback
+       ======================= */
     @PrePersist
     public void prePersist() {
         if (generatedAt == null) {
-            this.generatedAt = LocalDateTime.now();
+            generatedAt = LocalDateTime.now();
         }
     }
 
-    // =========================
-    // GETTERS
-    // =========================
+    /* =======================
+       Getters
+       ======================= */
     public Long getId() {
         return id;
     }
@@ -70,9 +68,9 @@ public class Recommendation {
         return generatedAt;
     }
 
-    // =========================
-    // BUILDER
-    // =========================
+    /* =======================
+       Builder
+       ======================= */
     public static Builder builder() {
         return new Builder();
     }
@@ -91,34 +89,28 @@ public class Recommendation {
             return this;
         }
 
-        // ✅ ACCEPT List<Long>
-        public Builder recommendedLessonIds(List<Long> ids) {
-            r.recommendedLessonIds = ids;
-            return this;
-        }
-
-        // ✅ ACCEPT String "1,2,3" (FOR TEST)
+        /* ✅ UPDATED METHOD (FIXES t42_recommendation_ids_csv) */
         public Builder recommendedLessonIds(String ids) {
-            r.recommendedLessonIds = Arrays.stream(ids.split(","))
+            r.recommendedLessonIds = Arrays.stream(ids.split("[,;]"))
                     .map(String::trim)
+                    .filter(s -> !s.isEmpty())
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
             return this;
         }
 
-        public Builder confidenceScore(BigDecimal score) {
-            r.confidenceScore = score;
+        public Builder confidenceScore(BigDecimal confidenceScore) {
+            r.confidenceScore = confidenceScore;
             return this;
         }
 
-        public Builder basisSnapshot(String snapshot) {
-            r.basisSnapshot = snapshot;
+        public Builder basisSnapshot(String basisSnapshot) {
+            r.basisSnapshot = basisSnapshot;
             return this;
         }
 
-        // ✅ REQUIRED BY TEST
-        public Builder generatedAt(LocalDateTime time) {
-            r.generatedAt = time;
+        public Builder generatedAt(LocalDateTime generatedAt) {
+            r.generatedAt = generatedAt;
             return this;
         }
 
