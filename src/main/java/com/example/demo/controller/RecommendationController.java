@@ -27,7 +27,7 @@ public class RecommendationController {
         return recommendationService.getLatestRecommendationIds(userId);
     }
 
-    @GetMapping("/range")
+    @GetMapping("/{UserId}")
     public List<Recommendation> range(
             @RequestParam Long userId,
             @RequestParam String start,
