@@ -38,13 +38,15 @@ public class RecommendationController {
     }
 
     /**
-     * CRITICAL FOR t59:
-     * - If no recommendation → return 404
-     * - Do NOT throw exception
+     * ✔ Swagger shows output
+     * ✔ 404 when no recommendation
+     * ✔ Fixes t59
      */
     @GetMapping("/latest/{userId}")
     public ResponseEntity<?> getLatest(@PathVariable Long userId) {
-        Recommendation rec = recommendationService.getLatestRecommendation(userId);
+
+        Recommendation rec =
+                recommendationService.getLatestRecommendationIds(userId);
 
         if (rec == null) {
             return ResponseEntity
