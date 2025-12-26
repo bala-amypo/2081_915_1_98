@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Recommendation;
 import com.example.demo.service.RecommendationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,31 +10,19 @@ import java.util.List;
 @RequestMapping("/recommendations")
 public class RecommendationController {
 
-    @Autowired
-    private RecommendationService recommendationService;
+    private final RecommendationService recommendationService;
 
-    // ===== EXISTING =====
-    @GetMapping("/range")
-    public List<Recommendation> getRecommendationsInRange(
-            @RequestParam Long userId,
-            @RequestParam String start,
-            @RequestParam String end) {
-        return recommendationService.getRecommendationsInRange(userId, start, end);
+    public RecommendationController(RecommendationService recommendationService) {
+        this.recommendationService = recommendationService;
     }
-
-    // ===== ✅ REQUIRED ADDITION =====
-    // POST /recommendations/generate
 
     @PostMapping("/generate")
     public Recommendation generate(@RequestParam Long userId) {
-        return recommendationService.generate(userId); // ✔ matches service
+        return recommendationService.generateRecommendation(userId);
     }
 
-    // ===== ✅ REQUIRED ADDITION =====
-    // GET /recommendations/latest
-
     @GetMapping("/latest")
-    public List<Long> getLatest(@RequestParam Long userId) {
-        return recommendationService.getLatestRecommendationIds(userId); // ✔ correct
+    public List<Long> latest(@RequestParam Long userId) {
+        return recommendationService.getLatestIds(userId);
     }
 }

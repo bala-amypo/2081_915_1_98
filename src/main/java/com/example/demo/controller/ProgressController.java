@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Progress;
 import com.example.demo.service.ProgressService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,25 +10,25 @@ import java.util.List;
 @RequestMapping("/progress")
 public class ProgressController {
 
-    @Autowired
-    private ProgressService progressService;
+    private final ProgressService progressService;
 
-    // ===== EXISTING =====
+    public ProgressController(ProgressService progressService) {
+        this.progressService = progressService;
+    }
+
     @PostMapping
-    public Progress recordProgress(@RequestBody Progress progress) {
-        return progressService.save(progress); // ✔ correct
+    public Progress record(@RequestBody Progress progress) {
+        return progressService.recordProgress(progress);
     }
 
     @GetMapping("/user/{userId}")
-    public List<Progress> getProgressByUser(@PathVariable Long userId) {
-        return progressService.findByUser(userId); // ✔ correct
+    public List<Progress> getUserProgress(@PathVariable Long userId) {
+        return progressService.getUserProgress(userId);
     }
 
-    // ===== ✅ REQUIRED ADDITION =====
-    // GET /progress/lesson/{lessonId}
-
+    // ✔ REQUIRED ENDPOINT
     @GetMapping("/lesson/{lessonId}")
-    public List<Progress> getProgressByLesson(@PathVariable Long lessonId) {
-        return progressService.findByLesson(lessonId); // ✔ correct
+    public List<Progress> getLessonProgress(@PathVariable Long lessonId) {
+        return progressService.getLessonProgress(lessonId);
     }
 }

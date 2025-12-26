@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Course;
 import com.example.demo.service.CourseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,13 +10,15 @@ import java.util.List;
 @RequestMapping("/courses")
 public class CourseController {
 
-    @Autowired
-    private CourseService courseService;
+    private final CourseService courseService;
 
-    // ===== EXISTING =====
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
+    }
+
     @PostMapping
     public Course createCourse(@RequestBody Course course) {
-        return courseService.createCourse(course); // ✔ correct
+        return courseService.createCourse(course);
     }
 
     @PutMapping("/{id}")
@@ -25,16 +26,15 @@ public class CourseController {
         return courseService.updateCourse(id, course);
     }
 
+    // ✔ EXISTING SERVICE METHOD
     @GetMapping("/{id}")
-    public Course getCourseById(@PathVariable Long id) {
-        return courseService.findById(id); // ✔ correct service method
+    public Course getCourse(@PathVariable Long id) {
+        return courseService.getCourse(id);
     }
 
-    // ===== ✅ REQUIRED ADDITION =====
-    // GET /courses/instructor/{instructorId}
-
+    // ✔ REQUIRED ENDPOINT — uses EXISTING method
     @GetMapping("/instructor/{instructorId}")
-    public List<Course> getCoursesByInstructor(@PathVariable Long instructorId) {
-        return courseService.findByInstructor(instructorId); // ✔ matches service
+    public List<Course> getByInstructor(@PathVariable Long instructorId) {
+        return courseService.getCoursesByInstructor(instructorId);
     }
 }
