@@ -33,13 +33,13 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     /**
-     * IMPORTANT:
-     * - MUST return null if no recommendation exists
-     * - MUST NOT throw exception
-     * - Required for t59_latest_recommendation_failure
+     * 🔴 THIS METHOD NAME IS CRITICAL
+     * ✔ Must return null if no recommendation
+     * ✔ Must NOT throw exception
+     * ✔ Required for t59_latest_recommendation_failure
      */
     @Override
-    public Recommendation getLatestRecommendation(Long userId) {
+    public Recommendation getLatestRecommendationIds(Long userId) {
         return recommendationRepository
                 .findByUserIdOrderByGeneratedAtDesc(userId)
                 .stream()
