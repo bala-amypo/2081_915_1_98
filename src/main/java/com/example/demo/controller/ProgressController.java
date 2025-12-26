@@ -16,25 +16,17 @@ public class ProgressController {
         this.progressService = progressService;
     }
 
-    // Existing service method
-    @PostMapping
-    public Progress save(@RequestBody Progress progress) {
-        return progressService.save(progress);
+    @PostMapping("/{userId}/{lessonId}")
+    public Progress record(
+            @PathVariable Long userId,
+            @PathVariable Long lessonId,
+            @RequestBody Progress progress) {
+
+        return progressService.recordProgress(userId, lessonId, progress);
     }
 
     @GetMapping("/user/{userId}")
     public List<Progress> byUser(@PathVariable Long userId) {
-        return progressService.getAllProgress()
-                .stream()
-                .filter(p -> p.getUser().getId().equals(userId))
-                .toList();
-    }
-
-    @GetMapping("/lesson/{lessonId}")
-    public List<Progress> byLesson(@PathVariable Long lessonId) {
-        return progressService.getAllProgress()
-                .stream()
-                .filter(p -> p.getMicroLesson().getId().equals(lessonId))
-                .toList();
+        return progressService.getUserProgress(userId);
     }
 }

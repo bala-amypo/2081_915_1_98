@@ -4,6 +4,7 @@ import com.example.demo.model.Recommendation;
 import com.example.demo.service.RecommendationService;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -16,15 +17,26 @@ public class RecommendationController {
         this.recommendationService = recommendationService;
     }
 
-    // EXISTING service method
     @PostMapping
     public Recommendation save(@RequestBody Recommendation recommendation) {
         return recommendationService.save(recommendation);
     }
 
-    // EXISTING service method
     @GetMapping("/latest")
     public List<Long> latest(@RequestParam Long userId) {
         return recommendationService.getLatestRecommendationIds(userId);
+    }
+
+    @GetMapping("/range")
+    public List<Recommendation> range(
+            @RequestParam Long userId,
+            @RequestParam String start,
+            @RequestParam String end) {
+
+        return recommendationService.getRecommendationsInRange(
+                userId,
+                LocalDateTime.parse(start),
+                LocalDateTime.parse(end)
+        );
     }
 }
