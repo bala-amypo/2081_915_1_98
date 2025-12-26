@@ -1,10 +1,17 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users") // ✅ FIX: avoid SQL keyword "user"
+@Table(name = "users") // avoid SQL keyword conflict
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder   // ✅ REQUIRED by tests
 public class User {
 
     @Id
@@ -17,50 +24,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String role;
 
     private LocalDateTime createdAt;
 
+    // ✅ REQUIRED by tests
     @PrePersist
-    protected void onCreate() {
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
-    }
-
-    // ===== Getters & Setters =====
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-    
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-    
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }
