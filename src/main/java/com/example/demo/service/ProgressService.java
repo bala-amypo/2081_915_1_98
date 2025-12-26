@@ -7,7 +7,7 @@ public interface ProgressService {
 
     Progress save(Progress progress);
 
-    List<Progress> getUserProgress(Long userId);
+    Progress recordProgress(Long userId, Long lessonId, Progress progress);
 
-    List<Progress> getLessonProgress(Long lessonId);
+    List<Progress> getUserProgress(Long userId);
 }

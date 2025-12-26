@@ -15,16 +15,15 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
 
-    // Constructor REQUIRED by tests
+    // REQUIRED by tests
     public CourseServiceImpl(CourseRepository courseRepository,
                              UserRepository userRepository) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
     }
 
-    // REQUIRED by DemoSystemTest
     @Override
-    public Course createCourse(Course course, long instructorId) {
+    public Course createCourse(Course course, Long instructorId) {
 
         if (courseRepository.existsByTitleAndInstructorId(
                 course.getTitle(), instructorId)) {
@@ -39,13 +38,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course getCourse(long courseId) {
+    public Course getCourse(Long courseId) {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 
     @Override
-    public List<Course> getCoursesByInstructor(long instructorId) {
+    public List<Course> getCoursesByInstructor(Long instructorId) {
         return courseRepository.findByInstructorId(instructorId);
     }
 

@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.model.MicroLesson;
 import com.example.demo.model.Progress;
+import com.example.demo.model.User;
 import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.ProgressRepository;
 import com.example.demo.repository.UserRepository;
@@ -17,7 +19,6 @@ public class ProgressServiceImpl implements ProgressService {
     private final UserRepository userRepository;
     private final MicroLessonRepository microLessonRepository;
 
-    // Constructor REQUIRED by tests
     public ProgressServiceImpl(ProgressRepository progressRepository,
                                UserRepository userRepository,
                                MicroLessonRepository microLessonRepository) {
@@ -26,10 +27,19 @@ public class ProgressServiceImpl implements ProgressService {
         this.microLessonRepository = microLessonRepository;
     }
 
-    // REQUIRED by DemoSystemTest
-    public Progress recordProgress(long userId,
-                                   long lessonId,
-                                   Progress progress) {
+    @Override
+    public Progress save(Progress progress) {
+        return progressRepository.save(progress);
+    }
+
+    @Override
+    public Progress recordProgress(Long userId, Long lessonId, Progress progress) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        MicroLesson lesson = microLessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
 
         Progress existing = progressRepository
                 .findByUserIdAndMicroLessonId(userId, lessonId)
@@ -37,31 +47,21 @@ public class ProgressServiceImpl implements ProgressService {
 
         if (existing != null) {
             existing.setProgressPercent(progress.getProgressPercent());
-            existing.setStatus(progress.getStatus());
             existing.setScore(progress.getScore());
+            existing.setStatus(progress.getStatus());
             existing.setLastAccessedAt(LocalDateTime.now());
             return progressRepository.save(existing);
         }
 
-        progress.setUser(userRepository.findById(userId).orElseThrow());
-        progress.setMicroLesson(
-                microLessonRepository.findById(lessonId).orElseThrow()
-        );
+        progress.setUser(user);
+        progress.setMicroLesson(lesson);
         progress.setLastAccessedAt(LocalDateTime.now());
 
         return progressRepository.save(progress);
     }
 
-    // REQUIRED by interface
     @Override
     public List<Progress> getUserProgress(Long userId) {
-        return progressRepository
-                .findByUserIdOrderByLastAccessedAtDesc(userId);
-    }
-
-    // REQUIRED by interface
-    @Override
-    public List<Progress> getLessonProgress(Long lessonId) {
-        return progressRepository.findByMicroLessonId(lessonId);
+        return progressRepository.findByUserIdOrderByLastAccessedAtDesc(userId);
     }
 }
