@@ -1,11 +1,3 @@
-package com.example.demo.controller;
-
-import com.example.demo.model.Course;
-import com.example.demo.service.CourseService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
@@ -26,15 +18,15 @@ public class CourseController {
         return courseService.updateCourse(id, course);
     }
 
-    // ✔ EXISTING SERVICE METHOD
+    // ✅ CORRECT METHOD NAME
     @GetMapping("/{id}")
     public Course getCourse(@PathVariable Long id) {
-        return courseService.getCourse(id);
+        return courseService.findCourse(id);
     }
 
-    // ✔ REQUIRED ENDPOINT — uses EXISTING method
+    // ✅ REQUIRED ENDPOINT
     @GetMapping("/instructor/{instructorId}")
     public List<Course> getByInstructor(@PathVariable Long instructorId) {
-        return courseService.getCoursesByInstructor(instructorId);
+        return courseService.findCoursesByInstructor(instructorId);
     }
 }
