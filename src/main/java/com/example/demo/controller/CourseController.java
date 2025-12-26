@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/courses")
+@RequestMapping("/api/courses")
 public class CourseController {
 
     private final CourseService courseService;
@@ -16,13 +16,13 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    // ---------------- EXISTING METHODS (DO NOT CHANGE) ----------------
-
+    // POST /api/courses  → create course
     @PostMapping
     public Course createCourse(@RequestBody Course course) {
         return courseService.createCourse(course);
     }
 
+    // PUT /api/courses/{courseId} → update course
     @PutMapping("/{courseId}")
     public Course updateCourse(
             @PathVariable Long courseId,
@@ -30,17 +30,15 @@ public class CourseController {
         return courseService.updateCourse(courseId, course);
     }
 
-    // ---------------- NEW METHODS (ADDED SAFELY) ----------------
+    // ✅ GET /api/courses/{courseId} → get course details
+    @GetMapping("/{courseId}")
+    public Course getCourse(@PathVariable Long courseId) {
+        return courseService.getCourse(courseId);
+    }
 
-    // ✅ 1. GET /courses/instructor/{instructorId}
+    // ✅ GET /api/courses/instructor/{instructorId} → list instructor courses
     @GetMapping("/instructor/{instructorId}")
     public List<Course> getCoursesByInstructor(@PathVariable Long instructorId) {
         return courseService.getCoursesByInstructor(instructorId);
-    }
-
-    // ✅ 2. GET /courses/{courseId}
-    @GetMapping("/{courseId}")
-    public Course getCourseDetails(@PathVariable Long courseId) {
-        return courseService.getCourse(courseId);
     }
 }
