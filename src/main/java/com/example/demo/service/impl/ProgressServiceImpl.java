@@ -1,37 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.model.Progress;
-import com.example.demo.repository.ProgressRepository;
-import com.example.demo.service.ProgressService;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class ProgressServiceImpl implements ProgressService {
-
-    private final ProgressRepository progressRepository;
-
-    public ProgressServiceImpl(ProgressRepository progressRepository) {
-        this.progressRepository = progressRepository;
-    }
-
-    @Override
-    public Progress save(Progress progress) {
-        return progressRepository.save(progress);
-    }
-
-    @Override
-    public List<Progress> getUserProgress(Long userId) {
-        return progressRepository.findByUserId(userId);
-    }
-
-    @Override
-    public List<Progress> getLessonProgress(Long lessonId) {
-        return progressRepository.findByMicroLessonId(lessonId);
-    }package com.example.demo.service.impl;
-
-import com.example.demo.model.Progress;
 import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.ProgressRepository;
 import com.example.demo.repository.UserRepository;
@@ -48,7 +17,7 @@ public class ProgressServiceImpl implements ProgressService {
     private final UserRepository userRepository;
     private final MicroLessonRepository microLessonRepository;
 
-    // REQUIRED BY TESTS
+    // Constructor REQUIRED by tests
     public ProgressServiceImpl(ProgressRepository progressRepository,
                                UserRepository userRepository,
                                MicroLessonRepository microLessonRepository) {
@@ -57,7 +26,7 @@ public class ProgressServiceImpl implements ProgressService {
         this.microLessonRepository = microLessonRepository;
     }
 
-    // REQUIRED BY TESTS
+    // REQUIRED by DemoSystemTest
     public Progress recordProgress(long userId,
                                    long lessonId,
                                    Progress progress) {
@@ -79,21 +48,20 @@ public class ProgressServiceImpl implements ProgressService {
                 microLessonRepository.findById(lessonId).orElseThrow()
         );
         progress.setLastAccessedAt(LocalDateTime.now());
+
         return progressRepository.save(progress);
     }
 
-    // REQUIRED BY INTERFACE & TESTS
+    // REQUIRED by interface
     @Override
     public List<Progress> getUserProgress(Long userId) {
         return progressRepository
                 .findByUserIdOrderByLastAccessedAtDesc(userId);
     }
 
-    // REQUIRED BY INTERFACE
+    // REQUIRED by interface
     @Override
     public List<Progress> getLessonProgress(Long lessonId) {
         return progressRepository.findByMicroLessonId(lessonId);
     }
-}
-
 }
