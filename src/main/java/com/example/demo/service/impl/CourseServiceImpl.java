@@ -15,26 +15,32 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
 
-    // REQUIRED by tests
-    public CourseServiceImpl(CourseRepository courseRepository,
-                             UserRepository userRepository) {
+    public CourseServiceImpl(
+            CourseRepository courseRepository,
+            UserRepository userRepository
+    ) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
     }
 
     @Override
     public Course createCourse(Course course, Long instructorId) {
-
-        if (courseRepository.existsByTitleAndInstructorId(
-                course.getTitle(), instructorId)) {
-            throw new RuntimeException("Course already exists");
-        }
-
         User instructor = userRepository.findById(instructorId)
                 .orElseThrow(() -> new RuntimeException("Instructor not found"));
 
         course.setInstructor(instructor);
         return courseRepository.save(course);
+    }
+
+    @Override
+    public Course updateCourse(Long courseId, Course updated) {
+        Course existing = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        existing.setTitle(updated.getTitle());
+        existing.setDescription(updated.getDescription());
+
+        return courseRepository.save(existing);
     }
 
     @Override
@@ -46,10 +52,5 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getCoursesByInstructor(Long instructorId) {
         return courseRepository.findByInstructorId(instructorId);
-    }
-
-    @Override
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
     }
 }
