@@ -5,6 +5,8 @@ import com.example.demo.repository.ProgressRepository;
 import com.example.demo.service.ProgressService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProgressServiceImpl implements ProgressService {
 
@@ -15,20 +17,17 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public Progress saveOrUpdateProgress(Long userId, Long lessonId, Progress progress) {
+    public Progress save(Progress progress) {
         return progressRepository.save(progress);
     }
 
     @Override
-    public Progress getProgressByUser(Long userId) {
-        return progressRepository.findTopByUserId(userId)
-                .orElse(null);
+    public List<Progress> getUserProgress(Long userId) {
+        return progressRepository.findByUserId(userId);
     }
 
-    // ✅ REQUIRED
     @Override
-    public Progress getProgressForLesson(Long userId, Long lessonId) {
-        return progressRepository.findByUserIdAndMicroLessonId(userId, lessonId)
-                .orElse(null);
+    public List<Progress> getLessonProgress(Long lessonId) {
+        return progressRepository.findByMicroLessonId(lessonId);
     }
 }
