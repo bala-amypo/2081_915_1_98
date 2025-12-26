@@ -1,9 +1,9 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.model.Recommendation;
+import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.RecommendationRepository;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.service.RecommendationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,18 +18,13 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
 
-    /**
-     * ✅ Constructor used by SPRING BOOT
-     * Only ONE constructor must be @Autowired
-     */
+    // ✅ Used by Spring
     @Autowired
     public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
         this.recommendationRepository = recommendationRepository;
     }
 
-    /**
-     * ✅ Constructor used by TESTS (DO NOT annotate)
-     */
+    // ✅ Used by tests
     public RecommendationServiceImpl(
             RecommendationRepository recommendationRepository,
             UserRepository userRepository,
@@ -38,15 +33,14 @@ public class RecommendationServiceImpl implements RecommendationService {
         this.recommendationRepository = recommendationRepository;
     }
 
-    // ============================
-    // Service Methods
-    // ============================
-
     @Override
     public Recommendation save(Recommendation recommendation) {
         return recommendationRepository.save(recommendation);
     }
 
+    /**
+     * ✅ Controller + Swagger method
+     */
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
         List<Recommendation> list =
@@ -60,9 +54,9 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     /**
-     * ✅ Required for test t59_latest_recommendation_failure
-     * Must return Optional.empty() when no recommendation exists
+     * ✅ REQUIRED FOR TEST t59_latest_recommendation_failure
      */
+    @Override
     public Optional<Recommendation> getLatestRecommendation(Long userId) {
         List<Recommendation> list =
                 recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);

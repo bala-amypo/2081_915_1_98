@@ -4,17 +4,21 @@ import com.example.demo.model.Recommendation;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface RecommendationService {
 
     Recommendation save(Recommendation recommendation);
 
+    // ✅ Swagger + Controller method
+    List<Long> getLatestRecommendationIds(Long userId);
+
+    // ✅ Required ONLY for test t59
+    Optional<Recommendation> getLatestRecommendation(Long userId);
+
     List<Recommendation> getRecommendationsInRange(
             Long userId,
-            LocalDateTime from,
-            LocalDateTime to
+            LocalDateTime start,
+            LocalDateTime end
     );
-
-    // 🔑 REQUIRED BY TESTS
-    Recommendation getLatestRecommendationIds(Long userId);
 }
