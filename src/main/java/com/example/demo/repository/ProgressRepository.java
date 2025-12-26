@@ -11,4 +11,6 @@ public interface ProgressRepository extends JpaRepository<Progress, Long> {
     Optional<Progress> findByUserIdAndMicroLessonId(Long userId, Long microLessonId);
 
     List<Progress> findByUserIdOrderByLastAccessedAtDesc(Long userId);
+
+    List<Progress> findByMicroLessonId(Long microLessonId);
 }
