@@ -16,17 +16,18 @@ public class ProgressController {
         this.progressService = progressService;
     }
 
-    @PostMapping("/{userId}/{lessonId}")
-    public Progress record(
-            @PathVariable Long userId,
-            @PathVariable Long lessonId,
-            @RequestBody Progress progress) {
-
-        return progressService.recordProgress(userId, lessonId, progress);
+    @PostMapping
+    public Progress saveProgress(@RequestBody Progress progress) {
+        return progressService.save(progress);
     }
 
     @GetMapping("/user/{userId}")
-    public List<Progress> byUser(@PathVariable Long userId) {
+    public List<Progress> getUserProgress(@PathVariable Long userId) {
         return progressService.getUserProgress(userId);
+    }
+
+    @GetMapping("/lesson/{lessonId}")
+    public List<Progress> getLessonProgress(@PathVariable Long lessonId) {
+        return progressService.getLessonProgress(lessonId);
     }
 }
