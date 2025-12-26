@@ -1,3 +1,12 @@
+package com.example.demo.controller;
+
+import com.example.demo.model.Course;
+import com.example.demo.service.CourseService;
+
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
@@ -18,13 +27,11 @@ public class CourseController {
         return courseService.updateCourse(id, course);
     }
 
-    // ✅ CORRECT METHOD NAME
     @GetMapping("/{id}")
     public Course getCourse(@PathVariable Long id) {
         return courseService.findCourse(id);
     }
 
-    // ✅ REQUIRED ENDPOINT
     @GetMapping("/instructor/{instructorId}")
     public List<Course> getByInstructor(@PathVariable Long instructorId) {
         return courseService.findCoursesByInstructor(instructorId);

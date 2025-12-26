@@ -1,3 +1,12 @@
+package com.example.demo.controller;
+
+import com.example.demo.model.Progress;
+import com.example.demo.service.ProgressService;
+
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/progress")
 public class ProgressController {
@@ -18,7 +27,6 @@ public class ProgressController {
         return progressService.getProgressByUser(userId);
     }
 
-    // ✅ REQUIRED ENDPOINT
     @GetMapping("/lesson/{lessonId}")
     public List<Progress> byLesson(@PathVariable Long lessonId) {
         return progressService.getProgressByLesson(lessonId);
