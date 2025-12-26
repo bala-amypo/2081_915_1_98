@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Recommendation;
 import com.example.demo.service.RecommendationService;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,11 +16,13 @@ public class RecommendationController {
         this.recommendationService = recommendationService;
     }
 
-    @PostMapping("/generate")
-    public Recommendation generate(@RequestParam Long userId) {
-        return recommendationService.generate(userId);
+    // EXISTING service method
+    @PostMapping
+    public Recommendation save(@RequestBody Recommendation recommendation) {
+        return recommendationService.save(recommendation);
     }
 
+    // EXISTING service method
     @GetMapping("/latest")
     public List<Long> latest(@RequestParam Long userId) {
         return recommendationService.getLatestRecommendationIds(userId);
