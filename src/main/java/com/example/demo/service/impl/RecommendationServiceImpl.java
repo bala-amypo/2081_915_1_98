@@ -6,6 +6,7 @@ import com.example.demo.service.RecommendationService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
@@ -16,20 +17,26 @@ public class RecommendationServiceImpl implements RecommendationService {
         this.recommendationRepository = recommendationRepository;
     }
 
-    // ✅ REQUIRED
     @Override
-    public Recommendation generateRecommendation(Long userId) {
-        Recommendation r = new Recommendation();
-        r.setUserId(userId);
-        r.setGeneratedAt(LocalDateTime.now());
-        return recommendationRepository.save(r);
+    public Recommendation save(Recommendation recommendation) {
+        return recommendationRepository.save(recommendation);
     }
 
-    // ✅ REQUIRED
     @Override
-    public Recommendation getLatestRecommendation(Long userId) {
+    public List<Long> getLatestRecommendationIds(Long userId) {
         return recommendationRepository
                 .findTopByUserIdOrderByGeneratedAtDesc(userId)
-                .orElse(null);
+                .map(Recommendation::parseRecommendationIds)
+                .orElse(List.of());
+    }
+
+    @Override
+    public List<Recommendation> getRecommendationsInRange(
+            Long userId,
+            LocalDateTime start,
+            LocalDateTime end) {
+
+        return recommendationRepository
+                .findByUserIdAndGeneratedAtBetween(userId, start, end);
     }
 }
