@@ -33,12 +33,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourse(Long courseId, Course updated) {
+    public Course updateCourse(Long courseId, Course updatedCourse) {
         Course existing = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
-        existing.setTitle(updated.getTitle());
-        existing.setDescription(updated.getDescription());
+        existing.setTitle(updatedCourse.getTitle());
+        existing.setDescription(updatedCourse.getDescription());
 
         return courseRepository.save(existing);
     }
@@ -52,5 +52,10 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getCoursesByInstructor(Long instructorId) {
         return courseRepository.findByInstructorId(instructorId);
+    }
+
+    @Override
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
     }
 }

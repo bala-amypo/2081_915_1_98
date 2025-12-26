@@ -16,7 +16,6 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    // CREATE course for instructor
     @PostMapping("/instructor/{instructorId}")
     public Course createCourse(
             @PathVariable Long instructorId,
@@ -25,7 +24,6 @@ public class CourseController {
         return courseService.createCourse(course, instructorId);
     }
 
-    // UPDATE course
     @PutMapping("/{courseId}")
     public Course updateCourse(
             @PathVariable Long courseId,
@@ -34,15 +32,18 @@ public class CourseController {
         return courseService.updateCourse(courseId, course);
     }
 
-    // GET course by id
     @GetMapping("/{courseId}")
     public Course getCourse(@PathVariable Long courseId) {
         return courseService.getCourse(courseId);
     }
 
-    // GET courses by instructor
     @GetMapping("/instructor/{instructorId}")
     public List<Course> getCoursesByInstructor(@PathVariable Long instructorId) {
         return courseService.getCoursesByInstructor(instructorId);
+    }
+
+    @GetMapping
+    public List<Course> getAllCourses() {
+        return courseService.getAllCourses();
     }
 }
