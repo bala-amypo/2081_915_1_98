@@ -8,13 +8,10 @@ import java.util.Optional;
 
 public interface RecommendationService {
 
-    Recommendation save(Recommendation recommendation);
-
-    // ✅ Swagger + Controller method
-    List<Long> getLatestRecommendationIds(Long userId);
-
-    // ✅ Required ONLY for test t59
     Optional<Recommendation> getLatestRecommendation(Long userId);
+
+    // 🔴 IMPORTANT: return type MUST be List<Long>
+    List<Long> getLatestRecommendationIds(Long userId);
 
     List<Recommendation> getRecommendationsInRange(
             Long userId,

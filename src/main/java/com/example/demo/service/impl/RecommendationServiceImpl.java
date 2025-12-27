@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
@@ -19,35 +18,20 @@ public class RecommendationServiceImpl implements RecommendationService {
         this.recommendationRepository = recommendationRepository;
     }
 
-    /**
-     * REQUIRED by RecommendationService
-     * Used by t59_latest_recommendation_failure
-     */
     @Override
     public Optional<Recommendation> getLatestRecommendation(Long userId) {
         return recommendationRepository
                 .findTopByUserIdOrderByGeneratedAtDesc(userId);
     }
 
-    /**
-     * REQUIRED by RecommendationService
-     * Returns ONLY lesson IDs (CSV converted to List<Long>)
-     */
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
-
-        Optional<Recommendation> latest =
-                recommendationRepository.findTopByUserIdOrderByGeneratedAtDesc(userId);
-
-        return latest
+        return recommendationRepository
+                .findTopByUserIdOrderByGeneratedAtDesc(userId)
                 .map(Recommendation::parseRecommendationIds)
                 .orElse(List.of());
     }
 
-    /**
-     * REQUIRED by RecommendationService
-     * Used by t58_hql_recommendation_range
-     */
     @Override
     public List<Recommendation> getRecommendationsInRange(
             Long userId,

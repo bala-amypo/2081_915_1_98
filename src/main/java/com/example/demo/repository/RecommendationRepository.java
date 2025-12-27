@@ -12,6 +12,7 @@ public interface RecommendationRepository
 
     Optional<Recommendation> findTopByUserIdOrderByGeneratedAtDesc(Long userId);
 
+    // 🔴 REQUIRED for range query test (t58)
     List<Recommendation> findByUserIdAndGeneratedAtBetween(
             Long userId,
             LocalDateTime start,
