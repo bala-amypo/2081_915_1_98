@@ -18,32 +18,30 @@ public class RecommendationController {
     }
 
     /**
-     * POST /recommendations/generate
+     * Generate recommendation (TESTS + SWAGGER EXPECT THIS)
      */
     @PostMapping("/generate")
-    public Recommendation generate(@RequestBody Recommendation recommendation) {
-        return recommendationService.save(recommendation);
-    }
-
-    /**
-     * ✅ GET /recommendations/latest?userId=1
-     * Swagger-friendly method
-     */
-    @GetMapping("/latest")
-    public List<Long> getLatest(@RequestParam Long userId) {
-        // ✅ CORRECT: returns List<Long>
+    public List<Long> generate(@RequestParam Long userId) {
         return recommendationService.getLatestRecommendationIds(userId);
     }
 
     /**
-     * GET /recommendations/range
+     * Get latest recommendation IDs
+     */
+    @GetMapping("/latest")
+    public List<Long> getLatest(@RequestParam Long userId) {
+        return recommendationService.getLatestRecommendationIds(userId);
+    }
+
+    /**
+     * Get recommendations in date range
      */
     @GetMapping("/range")
     public List<Recommendation> getInRange(
             @RequestParam Long userId,
             @RequestParam LocalDateTime start,
-            @RequestParam LocalDateTime end
-    ) {
+            @RequestParam LocalDateTime end) {
+
         return recommendationService.getRecommendationsInRange(userId, start, end);
     }
 }
