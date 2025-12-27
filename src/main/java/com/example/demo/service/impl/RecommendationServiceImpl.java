@@ -78,3 +78,33 @@
 //                 .findByUserIdAndGeneratedAtBetween(userId, start, end);
 //     }
 // }
+package com.example.demo.service.impl;
+
+import com.example.demo.model.Recommendation;
+import com.example.demo.repository.RecommendationRepository;
+import com.example.demo.service.RecommendationService;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class RecommendationServiceImpl implements RecommendationService {
+
+    private final RecommendationRepository recommendationRepository;
+
+    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
+        this.recommendationRepository = recommendationRepository;
+    }
+
+    @Override
+    public Recommendation getLatestRecommendation(Long userId) {
+
+        Optional<Recommendation> latest =
+                recommendationRepository.findTopByUserIdOrderByGeneratedAtDesc(userId);
+
+        // 🔥 THIS IS THE KEY FIX
+        // Do NOT create new Recommendation
+        // Return null if none exists
+        return latest.orElse(null);
+    }
+}
