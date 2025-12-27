@@ -5,14 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-public interface RecommendationRepository
-        extends JpaRepository<Recommendation, Long> {
+public interface RecommendationRepository extends JpaRepository<Recommendation, Long> {
 
-    Optional<Recommendation> findTopByUserIdOrderByGeneratedAtDesc(Long userId);
+    // ✅ Required by t59_latest_recommendation_failure
+    List<Recommendation> findByUserIdOrderByGeneratedAtDesc(Long userId);
 
-    // 🔴 REQUIRED for range query test (t58)
+    // ✅ Required by range test
     List<Recommendation> findByUserIdAndGeneratedAtBetween(
             Long userId,
             LocalDateTime start,
