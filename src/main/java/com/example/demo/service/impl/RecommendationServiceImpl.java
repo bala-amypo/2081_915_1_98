@@ -5,6 +5,7 @@ import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.RecommendationRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RecommendationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,14 +20,10 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final UserRepository userRepository;
     private final MicroLessonRepository microLessonRepository;
 
-    // ✅ Constructor used by Spring
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
-        this.recommendationRepository = recommendationRepository;
-        this.userRepository = null;
-        this.microLessonRepository = null;
-    }
-
-    // ✅ Constructor REQUIRED by DemoSystemTest
+    /**
+     * ✅ Constructor used by Spring Boot at runtime
+     */
+    @Autowired
     public RecommendationServiceImpl(
             RecommendationRepository recommendationRepository,
             UserRepository userRepository,
@@ -37,10 +34,20 @@ public class RecommendationServiceImpl implements RecommendationService {
         this.microLessonRepository = microLessonRepository;
     }
 
+    /**
+     * ✅ Constructor REQUIRED by DemoSystemTest (DO NOT REMOVE)
+     */
+    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
+        this.recommendationRepository = recommendationRepository;
+        this.userRepository = null;
+        this.microLessonRepository = null;
+    }
+
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
         Optional<Recommendation> latest =
-                recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId)
+                recommendationRepository
+                        .findByUserIdOrderByGeneratedAtDesc(userId)
                         .stream()
                         .findFirst();
 
