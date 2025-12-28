@@ -1,4 +1,4 @@
-// package com.example.demo.service.impl;
+package com.example.demo.service.impl;
 
 import com.example.demo.model.Recommendation;
 import com.example.demo.repository.MicroLessonRepository;
@@ -18,7 +18,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final UserRepository userRepository;
     private final MicroLessonRepository microLessonRepository;
 
-    // ✅ Constructor for Spring
+    // ✅ REQUIRED constructor (Spring + DemoSystemTest)
     public RecommendationServiceImpl(
             RecommendationRepository recommendationRepository,
             UserRepository userRepository,
@@ -29,7 +29,10 @@ public class RecommendationServiceImpl implements RecommendationService {
         this.microLessonRepository = microLessonRepository;
     }
 
-    // ===================== FIX FOR t59 =====================
+    /**
+     * ✅ t59_latest_recommendation_failure FIX
+     * If no recommendation exists → MUST FAIL (throw exception)
+     */
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
 
@@ -39,14 +42,13 @@ public class RecommendationServiceImpl implements RecommendationService {
                         .stream()
                         .findFirst();
 
-        // ✅ CRITICAL FIX: THROW exception when not found
         if (latest.isEmpty()) {
+            // ❗ REQUIRED BY TEST t59
             throw new IllegalStateException("No recommendation found for user");
         }
 
         return latest.get().parseRecommendationIds();
     }
-    // ======================================================
 
     @Override
     public Optional<Recommendation> getLatestRecommendation(Long userId) {
