@@ -5,6 +5,8 @@ import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.RecommendationRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RecommendationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,13 +14,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Primary
 public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
     private final UserRepository userRepository;
     private final MicroLessonRepository microLessonRepository;
 
-    // ✅ Constructor REQUIRED by Spring
+    /**
+     * ✅ THIS is the constructor Spring Boot MUST use
+     */
+    @Autowired
     public RecommendationServiceImpl(
             RecommendationRepository recommendationRepository,
             UserRepository userRepository,
@@ -29,7 +35,10 @@ public class RecommendationServiceImpl implements RecommendationService {
         this.microLessonRepository = microLessonRepository;
     }
 
-    // ✅ Constructor REQUIRED by TestNG (DI tests)
+    /**
+     * ✅ THIS constructor is REQUIRED by DemoSystemTest
+     * Spring will IGNORE this constructor
+     */
     public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
         this.recommendationRepository = recommendationRepository;
         this.userRepository = null;
@@ -37,8 +46,8 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     /**
-     * ✅ FIXED FOR t59_latest_recommendation_failure
-     * If no recommendation exists → THROW EXCEPTION (not empty list)
+     * ✅ FIX FOR t59_latest_recommendation_failure
+     * Must THROW exception if no recommendation exists
      */
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
@@ -56,9 +65,6 @@ public class RecommendationServiceImpl implements RecommendationService {
         return latest.get().parseRecommendationIds();
     }
 
-    /**
-     * Get recommendations within date range
-     */
     @Override
     public List<Recommendation> getRecommendationsInRange(
             Long userId,
@@ -69,9 +75,6 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .findByUserIdAndGeneratedAtBetween(userId, start, end);
     }
 
-    /**
-     * Get latest recommendation entity
-     */
     @Override
     public Optional<Recommendation> getLatestRecommendation(Long userId) {
 
