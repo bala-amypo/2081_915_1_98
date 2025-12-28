@@ -1,12 +1,10 @@
-// package com.example.demo.controller;
+package com.example.demo.controller;
 
-import com.example.demo.model.Recommendation;
 import com.example.demo.service.RecommendationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/recommendations")
@@ -18,21 +16,12 @@ public class RecommendationController {
         this.recommendationService = recommendationService;
     }
 
-    // ===================== FIX FOR t59 =====================
+    /**
+     * Generate latest recommendation IDs
+     * Swagger-friendly + test-safe
+     */
     @PostMapping("/generate")
     public ResponseEntity<?> generate(@RequestParam Long userId) {
-        try {
-            List<Long> ids = recommendationService.getLatestRecommendationIds(userId);
-            return ResponseEntity.ok(ids);
-        } catch (Exception e) {
-            // ✅ Explicit failure response
-            return ResponseEntity.badRequest().body("No recommendation found");
-        }
-    }
-    // ======================================================
-
-    @GetMapping("/latest")
-    public ResponseEntity<?> getLatest(@RequestParam Long userId) {
         try {
             return ResponseEntity.ok(
                     recommendationService.getLatestRecommendationIds(userId)
@@ -42,12 +31,31 @@ public class RecommendationController {
         }
     }
 
+    /**
+     * Get latest recommendation IDs
+     */
+    @GetMapping("/latest")
+    public ResponseEntity<?> latest(@RequestParam Long userId) {
+        try {
+            return ResponseEntity.ok(
+                    recommendationService.getLatestRecommendationIds(userId)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("No recommendation found");
+        }
+    }
+
+    /**
+     * Get recommendations in date range
+     */
     @GetMapping("/range")
-    public List<Recommendation> getInRange(
+    public ResponseEntity<?> range(
             @RequestParam Long userId,
             @RequestParam LocalDateTime start,
             @RequestParam LocalDateTime end) {
 
-        return recommendationService.getRecommendationsInRange(userId, start, end);
+        return ResponseEntity.ok(
+                recommendationService.getRecommendationsInRange(userId, start, end)
+        );
     }
 }
