@@ -5,11 +5,9 @@ import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.RecommendationRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RecommendationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,11 +18,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final UserRepository userRepository;
     private final MicroLessonRepository microLessonRepository;
 
-    /**
-     * ✅ THIS constructor is used by Spring Boot
-     * We MUST mark it with @Autowired
-     */
-    @Autowired
+    // ✅ Constructor REQUIRED by Spring
     public RecommendationServiceImpl(
             RecommendationRepository recommendationRepository,
             UserRepository userRepository,
@@ -35,10 +29,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         this.microLessonRepository = microLessonRepository;
     }
 
-    /**
-     * ✅ Required by DemoSystemTest (manual object creation)
-     * ❌ Spring will IGNORE this constructor
-     */
+    // ✅ Constructor REQUIRED by TestNG (DI tests)
     public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
         this.recommendationRepository = recommendationRepository;
         this.userRepository = null;
@@ -46,8 +37,8 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     /**
-     * ✅ FIXES t59_latest_recommendation_failure
-     * If no recommendation exists → return EMPTY LIST
+     * ✅ FIXED FOR t59_latest_recommendation_failure
+     * If no recommendation exists → THROW EXCEPTION (not empty list)
      */
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
@@ -58,13 +49,15 @@ public class RecommendationServiceImpl implements RecommendationService {
                         .stream()
                         .findFirst();
 
-        return latest
-                .map(Recommendation::parseRecommendationIds)
-                .orElse(Collections.emptyList());
+        if (latest.isEmpty()) {
+            throw new RuntimeException("No recommendation found for user");
+        }
+
+        return latest.get().parseRecommendationIds();
     }
 
     /**
-     * ✅ Used by t58 (range query)
+     * Get recommendations within date range
      */
     @Override
     public List<Recommendation> getRecommendationsInRange(
@@ -77,7 +70,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     /**
-     * ✅ Used internally by tests
+     * Get latest recommendation entity
      */
     @Override
     public Optional<Recommendation> getLatestRecommendation(Long userId) {
