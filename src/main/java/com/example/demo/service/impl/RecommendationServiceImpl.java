@@ -5,6 +5,7 @@ import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.RecommendationRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RecommendationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,17 +21,10 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final MicroLessonRepository microLessonRepository;
 
     /**
-     * ✅ Constructor used by Spring Boot
+     * ✅ THIS constructor is used by Spring Boot
+     * We MUST mark it with @Autowired
      */
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
-        this.recommendationRepository = recommendationRepository;
-        this.userRepository = null;
-        this.microLessonRepository = null;
-    }
-
-    /**
-     * ✅ Constructor REQUIRED by DemoSystemTest (DO NOT REMOVE)
-     */
+    @Autowired
     public RecommendationServiceImpl(
             RecommendationRepository recommendationRepository,
             UserRepository userRepository,
@@ -42,9 +36,18 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     /**
-     * ✅ FIX FOR t59_latest_recommendation_failure
+     * ✅ Required by DemoSystemTest (manual object creation)
+     * ❌ Spring will IGNORE this constructor
+     */
+    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
+        this.recommendationRepository = recommendationRepository;
+        this.userRepository = null;
+        this.microLessonRepository = null;
+    }
+
+    /**
+     * ✅ FIXES t59_latest_recommendation_failure
      * If no recommendation exists → return EMPTY LIST
-     * ❌ DO NOT throw exception
      */
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
@@ -61,7 +64,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     /**
-     * ✅ Used by recommendation range query (t58)
+     * ✅ Used by t58 (range query)
      */
     @Override
     public List<Recommendation> getRecommendationsInRange(
@@ -78,6 +81,7 @@ public class RecommendationServiceImpl implements RecommendationService {
      */
     @Override
     public Optional<Recommendation> getLatestRecommendation(Long userId) {
+
         return recommendationRepository
                 .findByUserIdOrderByGeneratedAtDesc(userId)
                 .stream()
