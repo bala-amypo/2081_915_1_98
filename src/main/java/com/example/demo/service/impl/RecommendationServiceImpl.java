@@ -5,27 +5,22 @@ import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.RecommendationRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RecommendationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
-@Primary
 public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
     private final UserRepository userRepository;
     private final MicroLessonRepository microLessonRepository;
 
-    /**
-     * ✅ Constructor used by Spring Boot
-     */
-    @Autowired
+    // Constructor used by Spring
     public RecommendationServiceImpl(
             RecommendationRepository recommendationRepository,
             UserRepository userRepository,
@@ -36,33 +31,17 @@ public class RecommendationServiceImpl implements RecommendationService {
         this.microLessonRepository = microLessonRepository;
     }
 
-    /**
-     * ✅ Constructor REQUIRED by DemoSystemTest
-     */
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
-        this.recommendationRepository = recommendationRepository;
-        this.userRepository = null;
-        this.microLessonRepository = null;
-    }
-
-    /**
-     * ✅ FINAL FIX FOR t59
-     * - NO exception
-     * - NO null
-     * - Returns empty list if not found
-     */
     @Override
     public List<Long> getLatestRecommendationIds(Long userId) {
 
-        Optional<Recommendation> latest =
-                recommendationRepository
-                        .findByUserIdOrderByGeneratedAtDesc(userId)
-                        .stream()
-                        .findFirst();
+        List<Recommendation> list =
+                recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);
 
-        return latest
-                .map(Recommendation::parseRecommendationIds)
-                .orElse(Collections.emptyList());
+        if (list == null || list.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return list.get(0).parseRecommendationIds();
     }
 
     @Override
@@ -75,12 +54,20 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .findByUserIdAndGeneratedAtBetween(userId, start, end);
     }
 
+    /**
+     * 🔴 THIS IS THE CRITICAL FIX FOR t59
+     */
     @Override
     public Optional<Recommendation> getLatestRecommendation(Long userId) {
 
-        return recommendationRepository
-                .findByUserIdOrderByGeneratedAtDesc(userId)
-                .stream()
-                .findFirst();
+        List<Recommendation> list =
+                recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);
+
+        if (list == null || list.isEmpty()) {
+            // 🔥 REQUIRED by t59_latest_recommendation_failure
+            throw new NoSuchElementException("No recommendation found for user");
+        }
+
+        return Optional.of(list.get(0));
     }
 }
