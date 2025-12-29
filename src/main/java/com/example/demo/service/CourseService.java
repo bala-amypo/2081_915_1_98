@@ -14,5 +14,5 @@ public interface CourseService {
 
     List<Course> getCoursesByInstructor(Long instructorId);
 
-    List<Course> getAllCourses();   // 🔴 REQUIRED BY TESTS
+    List<Course> getAllCourses();   
 }
